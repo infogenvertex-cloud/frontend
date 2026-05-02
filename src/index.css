@@ -1,0 +1,344 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #f0f4f8;
+  color: #212121;
+}
+
+/* Marvel theme background */
+.tech-bg {
+  background-color: #f0f4f8;
+  position: relative;
+  overflow: hidden;
+}
+.tech-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--marvel-bg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: rotate(var(--marvel-rotate, -90deg));
+  pointer-events: none;
+  z-index: 0;
+}
+.tech-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(240, 244, 248, 0.88);
+  pointer-events: none;
+  z-index: 0;
+}
+.tech-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Subtle circuit line decorations */
+.tech-lines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(90deg, transparent 48%, rgba(21, 101, 192, 0.04) 49%, rgba(21, 101, 192, 0.04) 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(21, 101, 192, 0.04) 49%, rgba(21, 101, 192, 0.04) 51%, transparent 52%);
+  background-size: 200px 200px;
+}
+
+/* Marvel Blue Accent Shadows */
+.marvel-glow-blue {
+  box-shadow: 0 2px 12px rgba(21, 101, 192, 0.12), 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.marvel-glow-gold {
+  box-shadow: 0 2px 12px rgba(251, 192, 45, 0.15), 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.marvel-glow-green {
+  box-shadow: 0 2px 12px rgba(46, 125, 50, 0.12), 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Light card */
+.marvel-glass {
+  background: #ffffff;
+  border: 1px solid #e0e4e8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Title styling - tech uppercase */
+.marvel-title {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0d2137;
+}
+
+/* Card entrance animation */
+@keyframes marvel-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.marvel-animate-in {
+  animation: marvel-fade-in 0.4s ease-out forwards;
+}
+
+/* Stats card hover effects */
+.stats-card {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+.stats-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* Card shine sweep on hover */
+.card-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 80%
+  );
+  z-index: 5;
+  pointer-events: none;
+  transition: none;
+}
+.stats-card:hover .card-shine {
+  animation: card-shine-sweep 0.8s ease forwards;
+}
+@keyframes card-shine-sweep {
+  from { left: -100%; }
+  to { left: 150%; }
+}
+
+/* Hulk card hover fix — prevent scaleX flip from being overridden */
+.stats-card:hover .group-hover\:scale-110 {
+  will-change: transform;
+}
+
+/* Stats card themes */
+.card-captain {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  border: 1px solid #d0d7e0;
+}
+
+.card-ironman {
+  background: linear-gradient(135deg, #fdf6e3 0%, #f5e6b8 50%, #f0d98c 100%);
+  border: 1px solid #e6cc6a;
+}
+
+.card-hulk {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  border: 1px solid #d0d7e0;
+}
+
+.card-thor {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  border: 1px solid #d0d7e0;
+}
+
+/* Metallic shine effect for Iron Man card */
+.metallic-gold {
+  position: relative;
+  overflow: hidden;
+}
+.metallic-gold::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* Primary blue button */
+.marvel-btn-primary {
+  background: #1565c0;
+  transition: all 0.3s ease;
+}
+.marvel-btn-primary:hover {
+  background: #0d47a1;
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+}
+
+/* Gold outlined button */
+.marvel-btn-gold {
+  background: transparent;
+  color: #1565c0;
+  border: 2px solid #1565c0;
+  transition: all 0.3s ease;
+}
+.marvel-btn-gold:hover {
+  background: #1565c0;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+}
+
+/* Download pill button */
+.marvel-btn-download {
+  background: linear-gradient(135deg, #e8ecf1 0%, #d0d7e0 100%);
+  border: 1px solid #bfc7d0;
+  color: #334155;
+  transition: all 0.3s ease;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.marvel-btn-download:hover {
+  background: linear-gradient(135deg, #d0d7e0 0%, #bfc7d0 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table row hover */
+.marvel-row-hover:hover {
+  background: rgba(21, 101, 192, 0.04);
+}
+
+/* Input styling */
+.marvel-input {
+  background: #ffffff;
+  border: 1px solid #d0d7e0;
+  color: #212121;
+  transition: all 0.3s ease;
+}
+.marvel-input:focus {
+  outline: none;
+  border-color: #1565c0;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+}
+.marvel-input::placeholder {
+  color: #9e9e9e;
+}
+
+/* Sidebar */
+.marvel-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e0e4e8;
+  border-left: 3px solid #1565c0;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Logo pulse on hover */
+.marvel-logo-pulse {
+  transition: transform 0.3s ease;
+}
+.marvel-logo-pulse:hover {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* Nav item hover effects */
+.nav-item {
+  position: relative;
+  cursor: pointer;
+}
+.nav-item:not(.nav-active):hover {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.nav-item:not(.nav-active):hover svg {
+  stroke: #334155;
+}
+.nav-item:not(.nav-active):hover .w-9 {
+  border-color: #cbd5e1;
+  background: #e2e8f0;
+}
+
+/* Active nav glow */
+.nav-active {
+  box-shadow: 0 2px 12px rgba(21, 101, 192, 0.08);
+}
+
+/* Shine sweep on hover */
+.nav-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+.nav-item:hover .nav-shine {
+  left: 100%;
+}
+
+/* Logout button */
+.logout-btn {
+  color: #94a3b8;
+  background: transparent;
+}
+.logout-btn:hover {
+  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transform: scale(1.1);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f0f4f8;
+}
+::-webkit-scrollbar-thumb {
+  background: #bfc7d0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1565c0;
+}
+
+/* Select dropdown */
+.marvel-input option {
+  background: #ffffff;
+  color: #212121;
+}
+
+/* Tech accent borders */
+.tech-border-top {
+  border-top: 2px solid #1565c0;
+}
+
+/* Green accent for hulk card */
+.accent-green {
+  border-bottom: 2px solid #2e7d32;
+}
+
+/* Blue lightning accent for thor card */
+.accent-blue {
+  border-bottom: 2px solid #1976d2;
+}
