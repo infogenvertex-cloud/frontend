@@ -68,7 +68,7 @@ export default function Subscriptions() {
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Start</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">End</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
+              {/* <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th> */}
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
               {/* <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Invoice</th> */}
             </tr>
@@ -86,9 +86,7 @@ export default function Subscriptions() {
                 <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>
                   {s.amount !== null && s.amount !== undefined ? `Rs. ${s.amount.toFixed(2)}` : "--"}
                 </td>
-                <td className="px-6 py-4 text-gray-600">
-                  {s.payment_date ? new Date(s.payment_date).toLocaleDateString() : "--"}
-                </td>
+                {/* Payment Date column REMOVED */}
                 <td className="px-6 py-4">
                   <span
                     className="px-3 py-1 rounded-full text-xs font-bold uppercase"
@@ -126,7 +124,7 @@ export default function Subscriptions() {
             ))}
             {subscriptions.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-6 py-8 text-center text-gray-400">
+                <td colSpan={9} className="px-6 py-8 text-center text-gray-400">
                   No subscriptions yet.
                 </td>
               </tr>
