@@ -14,11 +14,19 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const parsedAmount = parseFloat(amount);
+    
+    // Validate amount
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert("Please enter a valid amount greater than 0");
+      return;
+    }
+    
     onSubmit({ 
       member_id: memberId, 
       plan, 
       start_date: startDate,
-      amount: parseFloat(amount)
+      amount: parsedAmount
     });
   };
 

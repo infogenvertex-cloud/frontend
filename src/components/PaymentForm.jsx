@@ -5,7 +5,15 @@ export default function PaymentForm({ memberId, onSubmit, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ member_id: memberId, amount: parseFloat(amount) });
+    const parsedAmount = parseFloat(amount);
+    
+    // Validate amount
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert("Please enter a valid amount greater than 0");
+      return;
+    }
+    
+    onSubmit({ member_id: memberId, amount: parsedAmount });
     setAmount("");
   };
 
