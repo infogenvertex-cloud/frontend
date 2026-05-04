@@ -130,7 +130,7 @@ export default function Layout({ children, onLogout }) {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto p-8 tech-bg relative" style={{
+      <main className="flex-1 overflow-y-auto overflow-x-hidden p-8 tech-bg relative" style={{
         "--marvel-bg": `url(${(pageBgs[location.pathname] || pageBgs["/"+location.pathname.split("/")[1]] || pageBgs["/"]).img})`,
         "--marvel-rotate": (pageBgs[location.pathname] || pageBgs["/"+location.pathname.split("/")[1]] || pageBgs["/"]).rotate,
       }}>

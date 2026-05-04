@@ -1,17 +1,28 @@
 @import "tailwindcss";
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #bfc7d0 #f0f4f8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: #f0f4f8;
   color: #212121;
+  overflow: hidden; /* Prevent body scroll, let main handle it */
 }
 
 /* Marvel theme background */
 .tech-bg {
   background-color: #f0f4f8;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto; /* Changed from hidden to auto to enable scrolling */
+  overflow-x: hidden; /* Keep horizontal overflow hidden */
 }
 .tech-bg::before {
   content: '';
@@ -307,19 +318,33 @@ body {
   transform: scale(1.1);
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - Enhanced for better visibility */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
   background: #f0f4f8;
+  border-radius: 5px;
 }
 ::-webkit-scrollbar-thumb {
   background: #bfc7d0;
-  border-radius: 4px;
+  border-radius: 5px;
+  border: 2px solid #f0f4f8;
+  transition: background 0.3s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #1565c0;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #0d47a1;
+}
+
+/* Smooth scrolling for all scrollable containers */
+.overflow-auto,
+.overflow-y-auto,
+.tech-bg {
+  scroll-behavior: smooth;
 }
 
 /* Select dropdown */
