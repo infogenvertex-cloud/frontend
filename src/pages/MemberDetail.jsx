@@ -3,13 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api/axios";
 import SubscriptionForm from "../components/SubscriptionForm";
-import PaymentForm from "../components/PaymentForm";
 
 export default function MemberDetail() {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [showSubForm, setShowSubForm] = useState(false);
-  const [showPayForm, setShowPayForm] = useState(false);
 
   const { data: member, isLoading: memberLoading } = useQuery({
     queryKey: ["member", id],
@@ -21,25 +19,12 @@ export default function MemberDetail() {
     queryFn: () => api.get(`/subscriptions/member/${id}`).then((r) => r.data),
   });
 
-  const { data: payments = [] } = useQuery({
-    queryKey: ["payments", id],
-    queryFn: () => api.get(`/payments/member/${id}`).then((r) => r.data),
-  });
-
   const subMutation = useMutation({
     mutationFn: (data) => api.post("/subscriptions/", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions", id] });
-      setShowSubForm(false);
-    },
-  });
-
-  const payMutation = useMutation({
-    mutationFn: (data) => api.post("/payments/", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["payments", id] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
-      setShowPayForm(false);
+      setShowSubForm(false);
     },
   });
 
@@ -65,14 +50,14 @@ export default function MemberDetail() {
         <p className="text-gray-500">Joined: {member.join_date}</p>
       </div>
 
-      {/* Subscriptions */}
+      {/* Subscriptions & Payments Merged */}
       <div className="flex justify-between items-center mb-4">
-        <h3 className="marvel-title text-xl">Subscriptions</h3>
+        <h3 className="marvel-title text-xl">Subscriptions & Payments</h3>
         <button
           onClick={() => setShowSubForm(!showSubForm)}
           className="marvel-btn-gold px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
         >
-          + Add Subscription
+          + Add Subscription & Payment
         </button>
       </div>
 
@@ -91,7 +76,10 @@ export default function MemberDetail() {
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Plan</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Start</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">End</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Invoice</th>
             </tr>
           </thead>
           <tbody>
@@ -100,6 +88,8 @@ export default function MemberDetail() {
                 <td className="px-6 py-4 text-gray-700">{s.plan.replace("_", " ")}</td>
                 <td className="px-6 py-4 text-gray-600">{s.start_date}</td>
                 <td className="px-6 py-4 text-gray-600">{s.end_date}</td>
+                <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>Rs. {s.amount.toFixed(2)}</td>
+                <td className="px-6 py-4 text-gray-600">{new Date(s.payment_date).toLocaleDateString()}</td>
                 <td className="px-6 py-4">
                   <span
                     className="px-3 py-1 rounded-full text-xs font-bold uppercase"
@@ -112,58 +102,10 @@ export default function MemberDetail() {
                     {s.status}
                   </span>
                 </td>
-              </tr>
-            ))}
-            {subscriptions.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
-                  No subscriptions yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Payments */}
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="marvel-title text-xl">Payments</h3>
-        <button
-          onClick={() => setShowPayForm(!showPayForm)}
-          className="marvel-btn-primary text-white px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
-        >
-          + Record Payment
-        </button>
-      </div>
-
-      {showPayForm && (
-        <PaymentForm
-          memberId={parseInt(id)}
-          onSubmit={(data) => payMutation.mutate(data)}
-          onCancel={() => setShowPayForm(false)}
-        />
-      )}
-
-      <div className="bg-white rounded-xl overflow-hidden marvel-animate-in" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
-        <table className="w-full text-left">
-          <thead style={{ background: "#f5f7fa" }}>
-            <tr>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Invoice</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map((p) => (
-              <tr key={p.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
-                <td className="px-6 py-4 text-gray-600">{p.id}</td>
-                <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>Rs. {p.amount.toFixed(2)}</td>
-                <td className="px-6 py-4 text-gray-600">{new Date(p.payment_date).toLocaleDateString()}</td>
                 <td className="px-6 py-4">
-                  {p.invoice_url ? (
+                  {s.invoice_url ? (
                     <a
-                      href={p.invoice_url}
+                      href={s.invoice_url}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
@@ -179,10 +121,10 @@ export default function MemberDetail() {
                 </td>
               </tr>
             ))}
-            {payments.length === 0 && (
+            {subscriptions.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
-                  No payments yet.
+                <td colSpan={7} className="px-6 py-8 text-center text-gray-400">
+                  No subscriptions yet.
                 </td>
               </tr>
             )}

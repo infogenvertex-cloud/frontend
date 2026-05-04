@@ -5,7 +5,6 @@ import Dashboard from "./pages/Dashboard";
 import Members from "./pages/Members";
 import MemberDetail from "./pages/MemberDetail";
 import Subscriptions from "./pages/Subscriptions";
-import Payments from "./pages/Payments";
 import Visitors from "./pages/Visitors";
 import Login from "./pages/Login";
 
@@ -36,7 +35,6 @@ function App() {
         <Route path="/members" element={<Members />} />
         <Route path="/members/:id" element={<MemberDetail />} />
         <Route path="/subscriptions" element={<Subscriptions />} />
-        <Route path="/payments" element={<Payments />} />
         <Route path="/visitors" element={<Visitors />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
