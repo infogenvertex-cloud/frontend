@@ -4,7 +4,22 @@ import api from "../api/axios";
 export default function Subscriptions() {
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ["allSubscriptions"],
-    queryFn: () => api.get("/subscriptions/").then((r) => r.data),
+    queryFn: () => api.get("/subscriptions/").then((r) => {
+      console.log("📊 All Subscriptions data received:", r.data);
+      r.data.forEach((sub, index) => {
+        console.log(`Subscription ${index + 1}:`, {
+          id: sub.id,
+          member_code: sub.member_code,
+          plan: sub.plan,
+          amount: sub.amount,
+          amount_type: typeof sub.amount,
+          payment_date: sub.payment_date,
+          payment_date_type: typeof sub.payment_date,
+          invoice_url: sub.invoice_url
+        });
+      });
+      return r.data;
+    }),
   });
 
   if (isLoading) return <p className="text-gray-400">Loading...</p>;

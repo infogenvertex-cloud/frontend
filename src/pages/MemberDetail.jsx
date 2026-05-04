@@ -16,7 +16,21 @@ export default function MemberDetail() {
 
   const { data: subscriptions = [] } = useQuery({
     queryKey: ["subscriptions", id],
-    queryFn: () => api.get(`/subscriptions/member/${id}`).then((r) => r.data),
+    queryFn: () => api.get(`/subscriptions/member/${id}`).then((r) => {
+      console.log("📊 Subscriptions data received:", r.data);
+      r.data.forEach((sub, index) => {
+        console.log(`Subscription ${index + 1}:`, {
+          id: sub.id,
+          plan: sub.plan,
+          amount: sub.amount,
+          amount_type: typeof sub.amount,
+          payment_date: sub.payment_date,
+          payment_date_type: typeof sub.payment_date,
+          invoice_url: sub.invoice_url
+        });
+      });
+      return r.data;
+    }),
   });
 
   const subMutation = useMutation({
