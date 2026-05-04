@@ -58,32 +58,34 @@ export default function MemberDetail() {
     },
   });
 
-  const handleDownloadInvoice = async (subscriptionId) => {
-    try {
-      console.log(`📄 Downloading invoice for subscription ${subscriptionId}`);
-      
-      // Fetch the PDF from the API
-      const response = await api.get(`/subscriptions/${subscriptionId}/invoice`, {
-        responseType: 'blob', // Important: tells axios to expect binary data
-      });
-      
-      // Create a blob URL and trigger download
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `invoice_${subscriptionId}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      
-      console.log(`✅ Invoice downloaded successfully`);
-    } catch (error) {
-      console.error('❌ Error downloading invoice:', error);
-      alert('Failed to download invoice. Please try again.');
-    }
-  };
+  // ===== INVOICE DOWNLOAD COMMENTED OUT =====
+  // const handleDownloadInvoice = async (subscriptionId) => {
+  //   try {
+  //     console.log(`📄 Downloading invoice for subscription ${subscriptionId}`);
+  //     
+  //     // Fetch the PDF from the API
+  //     const response = await api.get(`/subscriptions/${subscriptionId}/invoice`, {
+  //       responseType: 'blob', // Important: tells axios to expect binary data
+  //     });
+  //     
+  //     // Create a blob URL and trigger download
+  //     const blob = new Blob([response.data], { type: 'application/pdf' });
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.download = `invoice_${subscriptionId}.pdf`;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     window.URL.revokeObjectURL(url);
+  //     
+  //     console.log(`✅ Invoice downloaded successfully`);
+  //   } catch (error) {
+  //     console.error('❌ Error downloading invoice:', error);
+  //     alert('Failed to download invoice. Please try again.');
+  //   }
+  // };
+  // ===== END INVOICE DOWNLOAD =====
 
   if (memberLoading) return <p className="text-gray-400">Loading...</p>;
 
@@ -137,7 +139,7 @@ export default function MemberDetail() {
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Invoice</th>
+              {/* <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Invoice</th> */}
             </tr>
           </thead>
           <tbody>
@@ -164,6 +166,7 @@ export default function MemberDetail() {
                     {s.status}
                   </span>
                 </td>
+                {/* ===== INVOICE COLUMN COMMENTED OUT =====
                 <td className="px-6 py-4">
                   {s.amount != null ? (
                     <button
@@ -183,11 +186,12 @@ export default function MemberDetail() {
                     <span className="text-gray-300 text-sm">No payment</span>
                   )}
                 </td>
+                ===== END INVOICE COLUMN ===== */}
               </tr>
             ))}
             {subscriptions.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-gray-400">
+                <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
                   No subscriptions yet.
                 </td>
               </tr>
