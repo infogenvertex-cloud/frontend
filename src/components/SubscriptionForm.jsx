@@ -32,6 +32,14 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
     });
   };
 
+  const handleAmountChange = (e) => {
+    // Only allow numbers and decimal point
+    const value = e.target.value;
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setAmount(value);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 mb-6 marvel-animate-in" style={{ borderLeft: "4px solid #1565c0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", borderLeftWidth: "4px", borderLeftColor: "#1565c0" }}>
       <h3 className="marvel-title text-lg mb-4">Add Subscription & Payment</h3>
@@ -61,11 +69,11 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Amount (Rs.)</label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            min="1"
-            step="0.01"
+            onChange={handleAmountChange}
+            placeholder="500.00"
             className="marvel-input w-full rounded-lg px-3 py-2"
             required
           />
