@@ -58,6 +58,33 @@ export default function MemberDetail() {
     },
   });
 
+  const handleDownloadInvoice = async (subscriptionId) => {
+    try {
+      console.log(`📄 Downloading invoice for subscription ${subscriptionId}`);
+      
+      // Fetch the PDF from the API
+      const response = await api.get(`/subscriptions/${subscriptionId}/invoice`, {
+        responseType: 'blob', // Important: tells axios to expect binary data
+      });
+      
+      // Create a blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `invoice_${subscriptionId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      console.log(`✅ Invoice downloaded successfully`);
+    } catch (error) {
+      console.error('❌ Error downloading invoice:', error);
+      alert('Failed to download invoice. Please try again.');
+    }
+  };
+
   if (memberLoading) return <p className="text-gray-400">Loading...</p>;
 
   return (
@@ -138,20 +165,22 @@ export default function MemberDetail() {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  {s.invoice_url ? (
-                    <a
-                      href={s.invoice_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                  {s.amount != null ? (
+                    <button
+                      onClick={() => handleDownloadInvoice(s.id)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white rounded-lg transition-all duration-200 hover:shadow-md"
+                      style={{ 
+                        background: "linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)",
+                        border: "1px solid rgba(21, 101, 192, 0.3)"
+                      }}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                       </svg>
-                      Invoice
-                    </a>
+                      Download Invoice
+                    </button>
                   ) : (
-                    <span className="text-gray-300 text-sm">--</span>
+                    <span className="text-gray-300 text-sm">No payment</span>
                   )}
                 </td>
               </tr>
