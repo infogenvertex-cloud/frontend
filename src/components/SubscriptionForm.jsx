@@ -7,7 +7,7 @@ const PLANS = [
   { value: "12_month", label: "12 Months" },
 ];
 
-export default function SubscriptionForm({ memberId, onSubmit, onCancel }) {
+export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmitting = false }) {
   const [plan, setPlan] = useState("1_month");
   const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
   const [amount, setAmount] = useState("");
@@ -72,15 +72,17 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel }) {
       <div className="flex gap-3 mt-4">
         <button
           type="submit"
-          className="marvel-btn-gold px-6 py-2 rounded-lg font-semibold uppercase tracking-wide text-sm"
+          disabled={isSubmitting}
+          className="marvel-btn-gold px-6 py-2 rounded-lg font-semibold uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Add Subscription & Record Payment
+          {isSubmitting ? "Processing..." : "Add Subscription & Record Payment"}
         </button>
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 rounded-lg font-medium transition-all duration-200 text-gray-500 text-sm uppercase tracking-wide"
+            disabled={isSubmitting}
+            className="px-6 py-2 rounded-lg font-medium transition-all duration-200 text-gray-500 text-sm uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ background: "#f0f4f8", border: "1px solid #d0d7e0" }}
           >
             Cancel

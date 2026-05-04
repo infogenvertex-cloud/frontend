@@ -34,11 +34,27 @@ export default function MemberDetail() {
   });
 
   const subMutation = useMutation({
-    mutationFn: (data) => api.post("/subscriptions/", data),
-    onSuccess: () => {
+    mutationFn: (data) => {
+      console.log("🚀 Creating subscription with data:", data);
+      return api.post("/subscriptions/", data);
+    },
+    onSuccess: (response) => {
+      console.log("✅ Subscription created successfully:", response.data);
+      console.log("💰 Amount:", response.data.amount);
+      console.log("📅 Payment Date:", response.data.payment_date);
+      console.log("📄 Invoice URL:", response.data.invoice_url);
+      
+      // Invalidate queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["subscriptions", id] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["allSubscriptions"] });
+      
       setShowSubForm(false);
+      alert("✅ Subscription created, payment recorded, and invoice generated successfully!");
+    },
+    onError: (error) => {
+      console.error("❌ Error creating subscription:", error);
+      alert(`Error: ${error.response?.data?.detail || error.message}`);
     },
   });
 
@@ -80,6 +96,7 @@ export default function MemberDetail() {
           memberId={parseInt(id)}
           onSubmit={(data) => subMutation.mutate(data)}
           onCancel={() => setShowSubForm(false)}
+          isSubmitting={subMutation.isPending}
         />
       )}
 
