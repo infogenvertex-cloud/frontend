@@ -103,7 +103,7 @@ export default function MemberDetail() {
                 <td className="px-6 py-4 text-gray-600">{s.start_date}</td>
                 <td className="px-6 py-4 text-gray-600">{s.end_date}</td>
                 <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>
-                  {s.amount !== null && s.amount !== undefined ? `Rs. ${s.amount.toFixed(2)}` : "--"}
+                  {s.amount != null ? `Rs. ${s.amount.toFixed(2)}` : "--"}
                 </td>
                 <td className="px-6 py-4 text-gray-600">
                   {s.payment_date ? new Date(s.payment_date).toLocaleDateString() : "--"}
