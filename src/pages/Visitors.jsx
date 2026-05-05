@@ -154,8 +154,8 @@ export default function Visitors() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="marvel-title text-2xl">Gym Visitors</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 className="marvel-title text-xl sm:text-2xl">Gym Visitors</h2>
         <button
           onClick={() => {
             if (showForm && !editing) {
@@ -167,15 +167,15 @@ export default function Visitors() {
               setErrors({});
             }
           }}
-          className="marvel-btn-primary text-white px-5 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
+          className="marvel-btn-primary text-white px-4 sm:px-5 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide w-full sm:w-auto"
         >
           {showForm && !editing ? "Cancel" : "+ Add Visitor"}
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white rounded-xl p-6 mb-6 marvel-animate-in" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
-          <h3 className="text-lg font-semibold mb-4" style={{ color: "#0d2137" }}>
+        <div className="bg-white rounded-xl p-4 sm:p-6 mb-6 marvel-animate-in" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
+          <h3 className="text-base sm:text-lg font-semibold mb-4" style={{ color: "#0d2137" }}>
             {editing ? "Edit Visitor" : "Add New Visitor"}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -189,7 +189,7 @@ export default function Visitors() {
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 className={`w-full px-4 py-2 rounded-lg border ${
                   errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-purple-500"
-                } focus:outline-none focus:ring-2 focus:border-transparent transition`}
+                } focus:outline-none focus:ring-2 focus:border-transparent transition text-sm sm:text-base`}
                 style={{ background: "#f9fafb" }}
               />
               {errors.name && (
@@ -207,7 +207,7 @@ export default function Visitors() {
                 placeholder="e.g., +1234567890 or 1234567890"
                 className={`w-full px-4 py-2 rounded-lg border ${
                   errors.mobile ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-purple-500"
-                } focus:outline-none focus:ring-2 focus:border-transparent transition`}
+                } focus:outline-none focus:ring-2 focus:border-transparent transition text-sm sm:text-base`}
                 style={{ background: "#f9fafb" }}
               />
               {errors.mobile && (
@@ -217,11 +217,11 @@ export default function Visitors() {
                 Enter 10-15 digits, optionally starting with +
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 type="submit"
                 disabled={loading}
-                className="marvel-btn-primary text-white px-6 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide disabled:opacity-50"
+                className="marvel-btn-primary text-white px-6 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide disabled:opacity-50 w-full sm:w-auto"
               >
                 {loading ? "Saving..." : editing ? "Update Visitor" : "Add Visitor"}
               </button>
@@ -229,7 +229,7 @@ export default function Visitors() {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="text-sm px-6 py-2 rounded-lg font-medium transition-all duration-200"
+                  className="text-sm px-6 py-2 rounded-lg font-medium transition-all duration-200 w-full sm:w-auto"
                   style={{ background: "rgba(100, 116, 139, 0.08)", color: "#64748b", border: "1px solid rgba(100, 116, 139, 0.2)" }}
                 >
                   Cancel
@@ -240,56 +240,60 @@ export default function Visitors() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl overflow-hidden marvel-animate-in" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
-        <table className="w-full text-left">
-          <thead style={{ background: "#f5f7fa" }}>
-            <tr>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">#</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Mobile</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Visited At</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visitors.length === 0 ? (
+      <div className="bg-white rounded-xl overflow-hidden marvel-animate-in overflow-x-auto" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
+        <div className="min-w-[600px]">
+          <table className="w-full text-left">
+            <thead style={{ background: "#f5f7fa" }}>
               <tr>
-                <td colSpan="5" className="px-6 py-8 text-center text-gray-400">
-                  No visitors recorded yet. Add your first visitor above.
-                </td>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">#</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Mobile</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Visited At</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
-            ) : (
-              visitors.map((visitor, index) => (
-                <tr key={visitor.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
-                  <td className="px-6 py-4 font-mono font-semibold" style={{ color: "#7b1fa2" }}>{index + 1}</td>
-                  <td className="px-6 py-4 font-medium" style={{ color: "#0d2137" }}>{visitor.name}</td>
-                  <td className="px-6 py-4 text-gray-600">{visitor.mobile}</td>
-                  <td className="px-6 py-4 text-gray-600">{formatDate(visitor.visited_at)}</td>
-                  <td className="px-6 py-4 space-x-2">
-                    <button
-                      onClick={() => handleEdit(visitor)}
-                      className="text-sm px-3 py-1 rounded font-medium transition-all duration-200"
-                      style={{ background: "rgba(123, 31, 162, 0.08)", color: "#7b1fa2", border: "1px solid rgba(123, 31, 162, 0.2)" }}
-                      onMouseEnter={(e) => e.target.style.background = "rgba(123, 31, 162, 0.15)"}
-                      onMouseLeave={(e) => e.target.style.background = "rgba(123, 31, 162, 0.08)"}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(visitor.id, visitor.name)}
-                      className="text-sm px-3 py-1 rounded font-medium transition-all duration-200"
-                      style={{ background: "rgba(198, 40, 40, 0.06)", color: "#c62828", border: "1px solid rgba(198, 40, 40, 0.15)" }}
-                      onMouseEnter={(e) => e.target.style.background = "rgba(198, 40, 40, 0.12)"}
-                      onMouseLeave={(e) => e.target.style.background = "rgba(198, 40, 40, 0.06)"}
-                    >
-                      Delete
-                    </button>
+            </thead>
+            <tbody>
+              {visitors.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
+                    No visitors recorded yet. Add your first visitor above.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                visitors.map((visitor, index) => (
+                  <tr key={visitor.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
+                    <td className="px-4 sm:px-6 py-4 font-mono font-semibold text-sm" style={{ color: "#7b1fa2" }}>{index + 1}</td>
+                    <td className="px-4 sm:px-6 py-4 font-medium text-sm" style={{ color: "#0d2137" }}>{visitor.name}</td>
+                    <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{visitor.mobile}</td>
+                    <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{formatDate(visitor.visited_at)}</td>
+                    <td className="px-4 sm:px-6 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleEdit(visitor)}
+                          className="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded font-medium transition-all duration-200"
+                          style={{ background: "rgba(123, 31, 162, 0.08)", color: "#7b1fa2", border: "1px solid rgba(123, 31, 162, 0.2)" }}
+                          onMouseEnter={(e) => e.target.style.background = "rgba(123, 31, 162, 0.15)"}
+                          onMouseLeave={(e) => e.target.style.background = "rgba(123, 31, 162, 0.08)"}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(visitor.id, visitor.name)}
+                          className="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded font-medium transition-all duration-200"
+                          style={{ background: "rgba(198, 40, 40, 0.06)", color: "#c62828", border: "1px solid rgba(198, 40, 40, 0.15)" }}
+                          onMouseEnter={(e) => e.target.style.background = "rgba(198, 40, 40, 0.12)"}
+                          onMouseLeave={(e) => e.target.style.background = "rgba(198, 40, 40, 0.06)"}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className="mt-4 text-sm" style={{ color: "#64748b" }}>

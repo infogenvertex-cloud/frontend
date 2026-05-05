@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { MarvelMLogo } from "./MarvelIcons";
 import marvelBg from "../assets/marvel theme2.jpg";
@@ -22,10 +23,37 @@ const navItems = [
 export default function Layout({ children, onLogout }) {
   const location = useLocation();
   const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen" style={{ background: "#f0f4f8" }}>
-      <aside className="w-72 marvel-sidebar flex flex-col">
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-lg"
+        style={{ border: "1px solid #e0e4e8" }}
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {sidebarOpen ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          )}
+        </svg>
+      </button>
+
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`w-72 marvel-sidebar flex flex-col fixed lg:relative h-full z-40 transition-transform duration-300 ${
+        sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+      }`}>
         {/* Logo Area */}
         <div className="px-6 py-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
@@ -54,6 +82,7 @@ export default function Layout({ children, onLogout }) {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={() => setSidebarOpen(false)}
                 className={`nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
                   active ? "nav-active" : ""
                 }`}
@@ -129,7 +158,7 @@ export default function Layout({ children, onLogout }) {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto overflow-x-hidden p-8 tech-bg relative" style={{
+      <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 tech-bg relative" style={{
         "--marvel-bg": `url(${(pageBgs[location.pathname] || pageBgs["/"+location.pathname.split("/")[1]] || pageBgs["/"]).img})`,
         "--marvel-rotate": (pageBgs[location.pathname] || pageBgs["/"+location.pathname.split("/")[1]] || pageBgs["/"]).rotate,
       }}>

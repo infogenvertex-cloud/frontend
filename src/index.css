@@ -260,6 +260,35 @@ body {
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.04);
 }
 
+/* Mobile sidebar adjustments */
+@media (max-width: 1023px) {
+  .marvel-sidebar {
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Stats card responsive height */
+@media (max-width: 640px) {
+  .stats-card {
+    height: 180px !important;
+  }
+}
+
+/* Responsive text sizes */
+@media (max-width: 640px) {
+  .marvel-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* Touch-friendly buttons on mobile */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
 /* Logo pulse on hover */
 .marvel-logo-pulse {
   transition: transform 0.3s ease;

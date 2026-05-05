@@ -16,9 +16,9 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h2 className="marvel-title text-3xl mb-8" style={{ letterSpacing: "0.1em" }}>DASHBOARD</h2>
+      <h2 className="marvel-title text-2xl sm:text-3xl mb-6 sm:mb-8" style={{ letterSpacing: "0.1em" }}>DASHBOARD</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <StatsCard
           title="TOTAL MEMBERS"
           value={data.total_members}
@@ -49,42 +49,44 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
       {/* Recent Payments Table */}
-      <div className="lg:col-span-3 bg-white rounded-xl p-6 marvel-animate-in overflow-auto" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", maxHeight: "calc(100vh - 380px)" }}>
-        <h3 className="text-lg font-bold mb-4 uppercase tracking-wide" style={{ color: "#0d2137" }}>
+      <div className="lg:col-span-3 bg-white rounded-xl p-4 sm:p-6 marvel-animate-in overflow-x-auto" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", maxHeight: "calc(100vh - 380px)" }}>
+        <h3 className="text-base sm:text-lg font-bold mb-4 uppercase tracking-wide" style={{ color: "#0d2137" }}>
           Recent Payments
         </h3>
         {data.recent_payments.length === 0 ? (
           <p className="text-gray-400">No payments yet.</p>
         ) : (
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-gray-200" style={{ background: "#f5f7fa" }}>
-                <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
-                <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Member ID</th>
-                <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Phone</th>
-                <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.recent_payments.map((p, idx) => {
-                const IconComponent = downloadIcons[idx % downloadIcons.length];
-                return (
-                  <tr key={p.id} className="border-b border-gray-100 marvel-row-hover transition-colors">
-                    <td className="py-3 px-4 text-gray-600">{p.id}</td>
-                    <td className="py-3 px-4 font-mono font-semibold" style={{ color: "#1565c0" }}>{p.member_code || p.member_id}</td>
-                    <td className="py-3 px-4 text-gray-700 font-medium">{p.member_name || "--"}</td>
-                    <td className="py-3 px-4 text-gray-600">{p.member_phone || "--"}</td>
-                    <td className="py-3 px-4 font-semibold" style={{ color: "#0d2137" }}>Rs. {p.amount.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-gray-600">{new Date(p.payment_date).toLocaleDateString()}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="min-w-[600px]">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-gray-200" style={{ background: "#f5f7fa" }}>
+                  <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
+                  <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Member ID</th>
+                  <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Phone</th>
+                  <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.recent_payments.map((p, idx) => {
+                  const IconComponent = downloadIcons[idx % downloadIcons.length];
+                  return (
+                    <tr key={p.id} className="border-b border-gray-100 marvel-row-hover transition-colors">
+                      <td className="py-3 px-4 text-gray-600">{p.id}</td>
+                      <td className="py-3 px-4 font-mono font-semibold" style={{ color: "#1565c0" }}>{p.member_code || p.member_id}</td>
+                      <td className="py-3 px-4 text-gray-700 font-medium">{p.member_name || "--"}</td>
+                      <td className="py-3 px-4 text-gray-600">{p.member_phone || "--"}</td>
+                      <td className="py-3 px-4 font-semibold" style={{ color: "#0d2137" }}>Rs. {p.amount.toFixed(2)}</td>
+                      <td className="py-3 px-4 text-gray-600">{new Date(p.payment_date).toLocaleDateString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

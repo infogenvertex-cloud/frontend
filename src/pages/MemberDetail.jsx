@@ -67,26 +67,26 @@ export default function MemberDetail() {
         &larr; Back to Members
       </Link>
 
-      <div className="bg-white rounded-xl p-6 mb-6 marvel-animate-in" style={{ borderLeft: "4px solid #1565c0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", borderLeftWidth: "4px", borderLeftColor: "#1565c0" }}>
-        <div className="flex items-center gap-3 mb-1">
-          <h2 className="marvel-title text-2xl">{member.name}</h2>
+      <div className="bg-white rounded-xl p-4 sm:p-6 mb-6 marvel-animate-in" style={{ borderLeft: "4px solid #1565c0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", borderLeftWidth: "4px", borderLeftColor: "#1565c0" }}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-1">
+          <h2 className="marvel-title text-xl sm:text-2xl">{member.name}</h2>
           <span
-            className="font-mono text-sm font-semibold px-3 py-1 rounded"
+            className="font-mono text-xs sm:text-sm font-semibold px-3 py-1 rounded"
             style={{ background: "rgba(21, 101, 192, 0.08)", color: "#1565c0", border: "1px solid rgba(21, 101, 192, 0.2)" }}
           >
             {member.member_id}
           </span>
         </div>
-        <p className="text-gray-500 mt-1">Phone: {member.phone}</p>
-        <p className="text-gray-500">Joined: {member.join_date}</p>
+        <p className="text-gray-500 mt-1 text-sm">Phone: {member.phone}</p>
+        <p className="text-gray-500 text-sm">Joined: {member.join_date}</p>
       </div>
 
       {/* Subscriptions */}
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="marvel-title text-xl">Subscriptions</h3>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+        <h3 className="marvel-title text-lg sm:text-xl">Subscriptions</h3>
         <button
           onClick={() => setShowSubForm(!showSubForm)}
-          className="marvel-btn-gold px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
+          className="marvel-btn-gold px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide w-full sm:w-auto"
         >
           + Add Subscription
         </button>
@@ -101,53 +101,55 @@ export default function MemberDetail() {
         />
       )}
 
-      <div className="bg-white rounded-xl overflow-hidden mb-8 marvel-animate-in" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
-        <table className="w-full text-left">
-          <thead style={{ background: "#f5f7fa" }}>
-            <tr>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Plan</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Start</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">End</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {subscriptions.map((s) => (
-              <tr key={s.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
-                <td className="px-6 py-4 text-gray-700">{s.plan.replace("_", " ")}</td>
-                <td className="px-6 py-4 text-gray-600">{s.start_date}</td>
-                <td className="px-6 py-4 text-gray-600">{s.end_date}</td>
-                <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>
-                  {s.amount != null ? `Rs. ${s.amount.toFixed(2)}` : "--"}
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  {s.payment_date ? new Date(s.payment_date).toLocaleDateString() : "--"}
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className="px-3 py-1 rounded-full text-xs font-bold uppercase"
-                    style={
-                      s.status === "active"
-                        ? { background: "rgba(46, 125, 50, 0.08)", color: "#2e7d32", border: "1px solid rgba(46, 125, 50, 0.2)" }
-                        : { background: "rgba(198, 40, 40, 0.06)", color: "#c62828", border: "1px solid rgba(198, 40, 40, 0.15)" }
-                    }
-                  >
-                    {s.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-            {subscriptions.length === 0 && (
+      <div className="bg-white rounded-xl overflow-hidden mb-8 marvel-animate-in overflow-x-auto" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
+        <div className="min-w-[700px]">
+          <table className="w-full text-left">
+            <thead style={{ background: "#f5f7fa" }}>
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
-                  No subscriptions yet.
-                </td>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Plan</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Start</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">End</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {subscriptions.map((s) => (
+                <tr key={s.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
+                  <td className="px-4 sm:px-6 py-4 text-gray-700 text-sm">{s.plan.replace("_", " ")}</td>
+                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{s.start_date}</td>
+                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{s.end_date}</td>
+                  <td className="px-4 sm:px-6 py-4 font-semibold text-sm" style={{ color: "#0d2137" }}>
+                    {s.amount != null ? `Rs. ${s.amount.toFixed(2)}` : "--"}
+                  </td>
+                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">
+                    {s.payment_date ? new Date(s.payment_date).toLocaleDateString() : "--"}
+                  </td>
+                  <td className="px-4 sm:px-6 py-4">
+                    <span
+                      className="px-2 sm:px-3 py-1 rounded-full text-xs font-bold uppercase whitespace-nowrap"
+                      style={
+                        s.status === "active"
+                          ? { background: "rgba(46, 125, 50, 0.08)", color: "#2e7d32", border: "1px solid rgba(46, 125, 50, 0.2)" }
+                          : { background: "rgba(198, 40, 40, 0.06)", color: "#c62828", border: "1px solid rgba(198, 40, 40, 0.15)" }
+                      }
+                    >
+                      {s.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+              {subscriptions.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
+                    No subscriptions yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

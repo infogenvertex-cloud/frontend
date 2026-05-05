@@ -81,24 +81,24 @@ export default function StatsCard({ title, value, icon, subtitle, theme }) {
       />
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-between p-5">
+      <div className="relative z-10 h-full flex flex-col justify-between p-4 sm:p-5">
         {/* Title with accent line */}
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/90 drop-shadow-sm">
+          <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-white/90 drop-shadow-sm">
             {title}
           </p>
           <div className="w-8 h-0.5 mt-2 rounded-full" style={{ background: colors.accent }} />
         </div>
 
         {/* Large value */}
-        <p className="text-5xl font-black text-white drop-shadow-lg tracking-tight">
+        <p className="text-4xl sm:text-5xl font-black text-white drop-shadow-lg tracking-tight">
           {value}
         </p>
 
         {/* Subtitle with icon */}
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: colors.accent }} />
-          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60">
+          <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60">
             {subtitle}
           </p>
         </div>
