@@ -24,9 +24,8 @@ export default function MemberDetail() {
           plan: sub.plan,
           amount: sub.amount,
           amount_type: typeof sub.amount,
-          payment_date: sub.payment_date,
-          payment_date_type: typeof sub.payment_date,
-          invoice_url: sub.invoice_url
+          // payment_date removed
+          // invoice_url removed
         });
       });
       return r.data;
@@ -41,8 +40,8 @@ export default function MemberDetail() {
     onSuccess: (response) => {
       console.log("✅ Subscription created successfully:", response.data);
       console.log("💰 Amount:", response.data.amount);
-      console.log("📅 Payment Date:", response.data.payment_date);
-      console.log("📄 Invoice URL:", response.data.invoice_url);
+      // console.log("📅 Payment Date:", response.data.payment_date);  // REMOVED
+      // console.log("📄 Invoice URL:", response.data.invoice_url);  // REMOVED
       
       // Invalidate queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["subscriptions", id] });

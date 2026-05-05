@@ -13,9 +13,8 @@ export default function Subscriptions() {
           plan: sub.plan,
           amount: sub.amount,
           amount_type: typeof sub.amount,
-          payment_date: sub.payment_date,
-          payment_date_type: typeof sub.payment_date,
-          invoice_url: sub.invoice_url
+          // payment_date removed
+          // invoice_url removed
         });
       });
       return r.data;
