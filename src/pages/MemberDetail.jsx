@@ -16,12 +16,35 @@ export default function MemberDetail() {
 
   const { data: subscriptions = [] } = useQuery({
     queryKey: ["subscriptions", id],
-    queryFn: () => api.get(`/subscriptions/`, { params: { member_id: id } }).then((r) => r.data),
+    queryFn: () => api.get(`/subscriptions/`, { params: { member_id: id } }).then((r) => {
+      console.log(`📊 Member ${id} Subscriptions API Response:`, r.data);
+      console.log(`📊 Total subscriptions for member ${id}:`, r.data.length);
+      
+      r.data.forEach((sub, index) => {
+        console.log(`\n=== Member ${id} Subscription ${index + 1} ===`);
+        console.log("ID:", sub.id);
+        console.log("Member ID:", sub.member_id);
+        console.log("Plan:", sub.plan);
+        console.log("Amount:", sub.amount, "| Type:", typeof sub.amount);
+        console.log("Payment Date:", sub.payment_date, "| Type:", typeof sub.payment_date);
+        console.log("Status:", sub.status);
+      });
+      
+      return r.data;
+    }),
   });
 
   const subMutation = useMutation({
-    mutationFn: (data) => api.post("/subscriptions/", data),
+    mutationFn: (data) => {
+      console.log("🚀 Creating subscription with data:", data);
+      return api.post("/subscriptions/", data);
+    },
     onSuccess: (response) => {
+      console.log("✅ Subscription created successfully!");
+      console.log("📦 Response data:", response.data);
+      console.log("💰 Amount:", response.data.amount, "| Type:", typeof response.data.amount);
+      console.log("📅 Payment Date:", response.data.payment_date, "| Type:", typeof response.data.payment_date);
+      
       queryClient.invalidateQueries({ queryKey: ["subscriptions", id] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       queryClient.invalidateQueries({ queryKey: ["allSubscriptions"] });
@@ -31,6 +54,7 @@ export default function MemberDetail() {
     },
     onError: (error) => {
       console.error("❌ Error creating subscription:", error);
+      console.error("❌ Error response:", error.response?.data);
       alert(`Error: ${error.response?.data?.detail || error.message}`);
     },
   });
