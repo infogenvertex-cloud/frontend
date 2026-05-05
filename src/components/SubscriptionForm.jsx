@@ -10,40 +10,20 @@ const PLANS = [
 export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmitting = false }) {
   const [plan, setPlan] = useState("1_month");
   const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
-  const [amount, setAmount] = useState("");
-  // const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split("T")[0]);  // REMOVED
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const parsedAmount = parseFloat(amount);
-    
-    // Validate amount
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      alert("Please enter a valid amount greater than 0");
-      return;
-    }
-    
     onSubmit({ 
       member_id: memberId, 
       plan, 
       start_date: startDate,
-      amount: parsedAmount,
-      // payment_date: paymentDate  // REMOVED
     });
-  };
-
-  const handleAmountChange = (e) => {
-    // Only allow numbers and decimal point
-    const value = e.target.value;
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      setAmount(value);
-    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 mb-6 marvel-animate-in" style={{ borderLeft: "4px solid #1565c0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", borderLeftWidth: "4px", borderLeftColor: "#1565c0" }}>
-      <h3 className="marvel-title text-lg mb-4">Add Subscription & Payment</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <h3 className="marvel-title text-lg mb-4">Add Subscription</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Plan</label>
           <select
@@ -66,19 +46,6 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
             required
           />
         </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Amount (Rs.)</label>
-          <input
-            type="text"
-            inputMode="decimal"
-            value={amount}
-            onChange={handleAmountChange}
-            placeholder="500.00"
-            className="marvel-input w-full rounded-lg px-3 py-2"
-            required
-          />
-        </div>
-        {/* Payment Date field REMOVED */}
       </div>
       <div className="flex gap-3 mt-4">
         <button
@@ -86,7 +53,7 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
           disabled={isSubmitting}
           className="marvel-btn-gold px-6 py-2 rounded-lg font-semibold uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Processing..." : "Add Subscription & Record Payment"}
+          {isSubmitting ? "Processing..." : "Add Subscription"}
         </button>
         {onCancel && (
           <button
