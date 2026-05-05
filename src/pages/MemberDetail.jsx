@@ -57,14 +57,14 @@ export default function MemberDetail() {
         <p className="text-gray-500">Joined: {member.join_date}</p>
       </div>
 
-      {/* Subscriptions */}
+      {/* Subscriptions & Payments */}
       <div className="flex justify-between items-center mb-4">
-        <h3 className="marvel-title text-xl">Subscriptions</h3>
+        <h3 className="marvel-title text-xl">Subscriptions & Payments</h3>
         <button
           onClick={() => setShowSubForm(!showSubForm)}
           className="marvel-btn-gold px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
         >
-          + Add Subscription
+          + Add Subscription & Payment
         </button>
       </div>
 
@@ -84,6 +84,8 @@ export default function MemberDetail() {
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Plan</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Start</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">End</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
               <th className="px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
             </tr>
           </thead>
@@ -93,6 +95,12 @@ export default function MemberDetail() {
                 <td className="px-6 py-4 text-gray-700">{s.plan.replace("_", " ")}</td>
                 <td className="px-6 py-4 text-gray-600">{s.start_date}</td>
                 <td className="px-6 py-4 text-gray-600">{s.end_date}</td>
+                <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>
+                  {s.amount != null ? `Rs. ${s.amount.toFixed(2)}` : "--"}
+                </td>
+                <td className="px-6 py-4 text-gray-600">
+                  {s.payment_date ? new Date(s.payment_date).toLocaleDateString() : "--"}
+                </td>
                 <td className="px-6 py-4">
                   <span
                     className="px-3 py-1 rounded-full text-xs font-bold uppercase"
@@ -109,7 +117,7 @@ export default function MemberDetail() {
             ))}
             {subscriptions.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
+                <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
                   No subscriptions yet.
                 </td>
               </tr>
