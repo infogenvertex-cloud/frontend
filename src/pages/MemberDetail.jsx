@@ -16,7 +16,7 @@ export default function MemberDetail() {
 
   const { data: subscriptions = [] } = useQuery({
     queryKey: ["subscriptions", id],
-    queryFn: () => api.get(`/subscriptions/member/${id}`).then((r) => {
+    queryFn: () => api.get(`/subscriptions/`, { params: { member_id: id } }).then((r) => {
       console.log("📊 Subscriptions data received:", r.data);
       r.data.forEach((sub, index) => {
         console.log(`Subscription ${index + 1}:`, {
