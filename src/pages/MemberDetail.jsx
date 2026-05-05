@@ -81,14 +81,14 @@ export default function MemberDetail() {
         <p className="text-gray-500">Joined: {member.join_date}</p>
       </div>
 
-      {/* Subscriptions & Payments */}
+      {/* Subscriptions */}
       <div className="flex justify-between items-center mb-4">
-        <h3 className="marvel-title text-xl">Subscriptions & Payments</h3>
+        <h3 className="marvel-title text-xl">Subscriptions</h3>
         <button
           onClick={() => setShowSubForm(!showSubForm)}
           className="marvel-btn-gold px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
         >
-          + Add Subscription & Payment
+          + Add Subscription
         </button>
       </div>
 

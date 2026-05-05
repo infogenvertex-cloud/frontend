@@ -3,7 +3,6 @@ import { MarvelMLogo } from "./MarvelIcons";
 import marvelBg from "../assets/marvel theme2.jpg";
 import ironmanBg from "../assets/Iron Man.jpg";
 import thorBg from "../assets/thor.jpg";
-import captainamerica from "../assets/captain america.jpg";
 import drstrange from "../assets/dr.strang.jpg";
 
 const pageBgs = {

@@ -1,6 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../api/axios";
 
+const formatAmount = (value) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return "--";
+  return `Rs. ${parsed.toFixed(2)}`;
+};
+
+const formatPaymentDate = (value) => {
+  if (!value) return "--";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "--";
+  return parsed.toLocaleDateString();
+};
+
 export default function Subscriptions() {
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ["allSubscriptions"],
@@ -31,7 +44,7 @@ export default function Subscriptions() {
 
   return (
     <div>
-      <h2 className="marvel-title text-2xl mb-6">Subscriptions & Payments</h2>
+      <h2 className="marvel-title text-2xl mb-6">Subscriptions</h2>
       <div className="bg-white rounded-xl overflow-hidden marvel-animate-in" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
         <table className="w-full text-left">
           <thead style={{ background: "#f5f7fa" }}>
@@ -58,12 +71,8 @@ export default function Subscriptions() {
                 <td className="px-6 py-4 text-gray-700">{s.plan.replace("_", " ")}</td>
                 <td className="px-6 py-4 text-gray-600">{s.start_date}</td>
                 <td className="px-6 py-4 text-gray-600">{s.end_date}</td>
-                <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>
-                  {s.amount !== null && s.amount !== undefined ? `Rs. ${s.amount.toFixed(2)}` : "--"}
-                </td>
-                <td className="px-6 py-4 text-gray-600">
-                  {s.payment_date ? new Date(s.payment_date).toLocaleDateString() : "--"}
-                </td>
+                <td className="px-6 py-4 font-semibold" style={{ color: "#0d2137" }}>{formatAmount(s.amount)}</td>
+                <td className="px-6 py-4 text-gray-600">{formatPaymentDate(s.payment_date)}</td>
                 <td className="px-6 py-4">
                   <span
                     className="px-3 py-1 rounded-full text-xs font-bold uppercase"

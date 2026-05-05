@@ -12,22 +12,25 @@ export default function Visitors() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    fetchVisitors();
-  }, []);
-
-  const fetchVisitors = async () => {
+  async function fetchVisitors() {
     try {
       const response = await api.get("/visitors");
       setVisitors(response.data);
     } catch (error) {
       console.error("Error fetching visitors:", error);
     }
-  };
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchVisitors();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const validateMobile = (mobile) => {
     // Remove spaces, dashes, and parentheses
-    const cleaned = mobile.replace(/[\s\-\(\)]/g, '');
+    const cleaned = mobile.replace(/[\s-()]/g, '');
     
     // Check if it contains only digits and optional + at start
     const mobileRegex = /^\+?\d{10,15}$/;

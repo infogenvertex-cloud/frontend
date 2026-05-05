@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #1565c0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0d47a1;
+        }
+        .success {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .error {
+            color: #c62828;
+            font-weight: bold;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f7fa;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Backend Connection Test</h1>
+    
+    <div class="test-box">
+        <h2>Test Backend URLs</h2>
+        <button onclick="testBackend('https://backend-gamma-seven-22.vercel.app')">
+            Test backend-22 (Correct)
+        </button>
+        <button onclick="testBackend('https://backend-gamma-seven-24.vercel.app')">
+            Test backend-24 (Wrong)
+        </button>
+        <div id="backend-result" class="result"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Test Subscriptions Endpoint</h2>
+        <p>Note: This will fail with 401 if not authenticated</p>
+        <button onclick="testSubscriptions()">Test GET /subscriptions/</button>
+        <div id="subscriptions-result" class="result"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Current Frontend Config</h2>
+        <button onclick="showConfig()">Show Config</button>
+        <div id="config-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testBackend(url) {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = `Testing ${url}...\n`;
+            
+            try {
+                const response = await fetch(`${url}/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML += `<span class="success">✅ SUCCESS</span>\n`;
+                    resultDiv.innerHTML += `Status: ${response.status}\n`;
+                    resultDiv.innerHTML += `Response: ${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.innerHTML += `<span class="error">❌ FAILED</span>\n`;
+                    resultDiv.innerHTML += `Status: ${response.status}\n`;
+                    resultDiv.innerHTML += `Response: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML += `<span class="error">❌ ERROR</span>\n`;
+                resultDiv.innerHTML += `Error: ${error.message}`;
+            }
+        }
+
+        async function testSubscriptions() {
+            const resultDiv = document.getElementById('subscriptions-result');
+            const backendUrl = 'https://backend-gamma-seven-22.vercel.app';
+            resultDiv.innerHTML = `Testing ${backendUrl}/subscriptions/...\n`;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                
+                const response = await fetch(`${backendUrl}/subscriptions/`, { headers });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML += `<span class="success">✅ SUCCESS</span>\n`;
+                    resultDiv.innerHTML += `Status: ${response.status}\n`;
+                    resultDiv.innerHTML += `Subscriptions count: ${data.length}\n`;
+                    resultDiv.innerHTML += `Response: ${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.innerHTML += `<span class="error">❌ FAILED</span>\n`;
+                    resultDiv.innerHTML += `Status: ${response.status}\n`;
+                    resultDiv.innerHTML += `Response: ${JSON.stringify(data, null, 2)}`;
+                    
+                    if (response.status === 401) {
+                        resultDiv.innerHTML += `\n\n💡 This is expected if you're not logged in.`;
+                    }
+                }
+            } catch (error) {
+                resultDiv.innerHTML += `<span class="error">❌ ERROR</span>\n`;
+                resultDiv.innerHTML += `Error: ${error.message}`;
+            }
+        }
+
+        function showConfig() {
+            const resultDiv = document.getElementById('config-result');
+            resultDiv.innerHTML = `Environment: ${window.location.hostname}\n`;
+            resultDiv.innerHTML += `Token exists: ${!!localStorage.getItem('token')}\n`;
+            resultDiv.innerHTML += `\nNote: VITE_API_URL is only available during build time.\n`;
+            resultDiv.innerHTML += `Check the Network tab in DevTools to see actual API calls.`;
+        }
+    </script>
+</body>
+</html>

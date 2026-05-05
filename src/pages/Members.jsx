@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
@@ -118,6 +118,7 @@ export default function Members() {
 
       {showForm && (
         <MemberForm
+          key="new-member"
           onSubmit={(data) => createMutation.mutate(data)}
           onCancel={() => setShowForm(false)}
         />
@@ -125,6 +126,7 @@ export default function Members() {
 
       {editing && (
         <MemberForm
+          key={`edit-member-${editing.id}`}
           member={editing}
           onSubmit={(data) => updateMutation.mutate({ id: editing.id, data })}
           onCancel={() => setEditing(null)}

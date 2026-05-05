@@ -67,7 +67,6 @@ export default function Dashboard() {
                 <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Phone</th>
                 <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
                 <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="pb-3 pt-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Invoice</th>
               </tr>
             </thead>
             <tbody>
@@ -81,23 +80,6 @@ export default function Dashboard() {
                     <td className="py-3 px-4 text-gray-600">{p.member_phone || "--"}</td>
                     <td className="py-3 px-4 font-semibold" style={{ color: "#0d2137" }}>Rs. {p.amount.toFixed(2)}</td>
                     <td className="py-3 px-4 text-gray-600">{new Date(p.payment_date).toLocaleDateString()}</td>
-                    <td className="py-3 px-4">
-                      {p.invoice_url ? (
-                        <a
-                          href={p.invoice_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                          Invoice
-                        </a>
-                      ) : (
-                        <span className="text-gray-300 text-sm">--</span>
-                      )}
-                    </td>
                   </tr>
                 );
               })}

@@ -1,15 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function MemberForm({ member, onSubmit, onCancel }) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-
-  useEffect(() => {
-    if (member) {
-      setName(member.name);
-      setPhone(member.phone);
-    }
-  }, [member]);
+  const [name, setName] = useState(member?.name ?? "");
+  const [phone, setPhone] = useState(member?.phone ?? "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
