@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const rawApiUrl = import.meta.env.VITE_API_URL || "https://backend-gamma-seven-22.vercel.app";
+const sanitizedApiUrl = rawApiUrl.trim().replace(/^['"`]+|['"`]+$/g, "");
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://backend-gamma-seven-22.vercel.app",
+  baseURL: sanitizedApiUrl,
 });
 
 api.interceptors.request.use((config) => {
