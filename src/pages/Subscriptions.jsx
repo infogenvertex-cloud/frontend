@@ -10,10 +10,7 @@ export default function Subscriptions() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["subscriptionsGrouped", page],
-    queryFn: () => api.get(`/subscriptions/grouped?page=${page}&limit=${limit}`).then((r) => {
-      console.log("📊 Grouped Subscriptions API Response:", r.data);
-      return r.data;
-    }),
+    queryFn: () => api.get(`/subscriptions/grouped?page=${page}&limit=${limit}`).then((r) => r.data),
   });
 
   const groupedData = data?.data || [];
