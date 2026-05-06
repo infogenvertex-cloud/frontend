@@ -8,9 +8,23 @@ export default function Subscriptions() {
   const [page, setPage] = useState(1);
   const limit = 20;
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["subscriptionsGrouped", page],
-    queryFn: () => api.get(`/subscriptions/grouped?page=${page}&limit=${limit}`).then((r) => r.data),
+    queryFn: async () => {
+      try {
+        const r = await api.get(`/subscriptions/grouped?page=${page}&limit=${limit}`);
+        return r.data;
+      } catch (err) {
+        console.error("=== SUBSCRIPTIONS API ERROR ===");
+        console.error("Status:", err.response?.status);
+        console.error("Status Text:", err.response?.statusText);
+        console.error("Response Data:", JSON.stringify(err.response?.data, null, 2));
+        console.error("Request URL:", err.config?.url);
+        console.error("Request Headers:", err.config?.headers);
+        throw err;
+      }
+    },
+    retry: false,
   });
 
   const groupedData = data?.data || [];
@@ -29,6 +43,18 @@ export default function Subscriptions() {
   };
 
   if (isLoading) return <p className="text-gray-400">Loading...</p>;
+
+  if (error) {
+    const detail = error.response?.data?.detail;
+    const status = error.response?.status;
+    const errorText = typeof detail === "object" ? JSON.stringify(detail, null, 2) : (detail || error.message);
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6 font-mono text-sm">
+        <p className="font-bold text-red-700 mb-2">API Error {status}</p>
+        <pre className="text-red-600 whitespace-pre-wrap">{errorText}</pre>
+      </div>
+    );
+  }
 
   return (
     <div>
