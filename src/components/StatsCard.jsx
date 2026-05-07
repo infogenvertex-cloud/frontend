@@ -1,13 +1,15 @@
 import captainImg from "../assets/captain america.jpg";
 import ironmanImg from "../assets/Iron Man.jpg";
-import hulkImg from "../assets/dr.strang.jpg";
+import hulkImg from "../assets/Hulk.jpg";
 import thorImg from "../assets/thor.jpg";
+import spydermanImg from "../assets/spyderman.jpg";
 
 const cardImages = {
   captain: captainImg,
   ironman: ironmanImg,
   hulk: hulkImg,
   thor: thorImg,
+  spyderman: spydermanImg,
 };
 
 const cardColors = {
@@ -34,6 +36,12 @@ const cardColors = {
     border: "#1976d2",
     glow: "rgba(25,118,210,0.25)",
     accent: "#42a5f5",
+  },
+  spyderman: {
+    overlay: "linear-gradient(135deg, rgba(120,20,20,0.75), rgba(198,40,40,0.5))",
+    border: "#d32f2f",
+    glow: "rgba(211,47,47,0.25)",
+    accent: "#ef5350",
   },
 };
 

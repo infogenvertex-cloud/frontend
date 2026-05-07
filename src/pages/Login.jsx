@@ -15,13 +15,29 @@ export default function Login({ onLogin }) {
     setError("");
     setLoading(true);
 
+    console.log("🔐 Login attempt:", { email });
+
     try {
+      console.log("📤 Sending login request...");
       const res = await api.post("/auth/login", { email, password });
+      console.log("✅ Login successful:", { 
+        hasToken: !!res.data.access_token,
+        name: res.data.name,
+        email: res.data.email 
+      });
+      
       localStorage.setItem("token", res.data.access_token);
       localStorage.setItem("admin", JSON.stringify({ name: res.data.name, email: res.data.email }));
+      
+      console.log("💾 Token and admin data saved to localStorage");
+      console.log("🔄 Calling onLogin callback");
+      
       onLogin();
       navigate("/");
+      
+      console.log("🏠 Navigating to dashboard");
     } catch (err) {
+      console.error("❌ Login failed:", err);
       setError(err.response?.data?.detail || "Invalid credentials");
     } finally {
       setLoading(false);

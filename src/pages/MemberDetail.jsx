@@ -3,34 +3,46 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api/axios";
 import SubscriptionForm from "../components/SubscriptionForm";
+import Pagination from "../components/Pagination";
 
 export default function MemberDetail() {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [showSubForm, setShowSubForm] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const { data: member, isLoading: memberLoading } = useQuery({
     queryKey: ["member", id],
     queryFn: () => api.get(`/members/${id}`).then((r) => r.data),
   });
 
-  const { data: subscriptions = [] } = useQuery({
-    queryKey: ["subscriptions", id],
-    queryFn: () => api.get(`/subscriptions/`, { params: { member_id: id } }).then((r) => r.data),
+  const { data: paymentsData } = useQuery({
+    queryKey: ["payments", id, currentPage, pageSize],
+    queryFn: () => {
+      const params = new URLSearchParams({
+        member_id: id,
+        page: currentPage,
+        page_size: pageSize,
+      });
+      return api.get(`/payments/?${params.toString()}`).then((r) => r.data);
+    },
   });
 
-  const subMutation = useMutation({
-    mutationFn: (data) => api.post("/subscriptions/", data),
+  const payments = paymentsData?.items || [];
+  const totalPages = paymentsData?.total_pages || 1;
+
+  const paymentMutation = useMutation({
+    mutationFn: (data) => api.post("/payments/", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["subscriptions", id] });
+      queryClient.invalidateQueries({ queryKey: ["payments", id] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
-      queryClient.invalidateQueries({ queryKey: ["allSubscriptions"] });
       
       setShowSubForm(false);
-      alert("✅ Subscription created successfully!");
+      alert("✅ Payment created successfully!");
     },
     onError: (error) => {
-      console.error("❌ Error creating subscription:", error);
+      console.error("❌ Error creating payment:", error);
       console.error("❌ Error response:", error.response?.data);
       alert(`Error: ${error.response?.data?.detail || error.message}`);
     },
@@ -58,23 +70,23 @@ export default function MemberDetail() {
         <p className="text-gray-500 text-sm">Joined: {member.join_date}</p>
       </div>
 
-      {/* Subscriptions */}
+      {/* Payments */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-        <h3 className="marvel-title text-lg sm:text-xl">Subscriptions</h3>
+        <h3 className="marvel-title text-lg sm:text-xl">Payments</h3>
         <button
           onClick={() => setShowSubForm(!showSubForm)}
           className="marvel-btn-gold px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide w-full sm:w-auto"
         >
-          + Add Subscription
+          + Add Payment
         </button>
       </div>
 
       {showSubForm && (
         <SubscriptionForm
           memberId={parseInt(id)}
-          onSubmit={(data) => subMutation.mutate(data)}
+          onSubmit={(data) => paymentMutation.mutate(data)}
           onCancel={() => setShowSubForm(false)}
-          isSubmitting={subMutation.isPending}
+          isSubmitting={paymentMutation.isPending}
         />
       )}
 
@@ -84,43 +96,34 @@ export default function MemberDetail() {
             <thead style={{ background: "#f5f7fa" }}>
               <tr>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Plan</th>
-                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Start</th>
-                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">End</th>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
-                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Notes</th>
               </tr>
             </thead>
             <tbody>
-              {subscriptions.map((s) => (
-                <tr key={s.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
-                  <td className="px-4 sm:px-6 py-4 text-gray-700 text-sm">{s.plan.replace("_", " ")}</td>
-                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{s.start_date}</td>
-                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{s.end_date}</td>
+              {payments.map((p) => (
+                <tr key={p.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
+                  <td className="px-4 sm:px-6 py-4 text-gray-700 text-sm">
+                    <span className="px-2 py-1 rounded text-xs font-semibold" style={{ background: "#e3f2fd", color: "#1565c0" }}>
+                      {p.plan.replace("_", " ").toUpperCase()}
+                    </span>
+                  </td>
                   <td className="px-4 sm:px-6 py-4 font-semibold text-sm" style={{ color: "#0d2137" }}>
-                    {s.amount != null ? `Rs. ${s.amount.toFixed(2)}` : "--"}
+                    Rs. {p.amount.toFixed(2)}
                   </td>
                   <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">
-                    {s.payment_date ? new Date(s.payment_date).toLocaleDateString() : "--"}
+                    {new Date(p.payment_date).toLocaleDateString()}
                   </td>
-                  <td className="px-4 sm:px-6 py-4">
-                    <span
-                      className="px-2 sm:px-3 py-1 rounded-full text-xs font-bold uppercase whitespace-nowrap"
-                      style={
-                        s.status === "active"
-                          ? { background: "rgba(46, 125, 50, 0.08)", color: "#2e7d32", border: "1px solid rgba(46, 125, 50, 0.2)" }
-                          : { background: "rgba(198, 40, 40, 0.06)", color: "#c62828", border: "1px solid rgba(198, 40, 40, 0.15)" }
-                      }
-                    >
-                      {s.status}
-                    </span>
+                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">
+                    {p.notes || "--"}
                   </td>
                 </tr>
               ))}
-              {subscriptions.length === 0 && (
+              {payments.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
-                    No subscriptions yet.
+                  <td colSpan={4} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
+                    No payments yet.
                   </td>
                 </tr>
               )}
@@ -128,6 +131,15 @@ export default function MemberDetail() {
           </table>
         </div>
       </div>
+
+      {/* Pagination for Payments */}
+      {payments.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 }

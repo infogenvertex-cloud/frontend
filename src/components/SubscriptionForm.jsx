@@ -9,9 +9,9 @@ const PLANS = [
 
 export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmitting = false }) {
   const [plan, setPlan] = useState("1_month");
-  const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
   const [amount, setAmount] = useState("");
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split("T")[0]);
+  const [notes, setNotes] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,9 +26,9 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
     onSubmit({ 
       member_id: memberId, 
       plan, 
-      start_date: startDate,
       amount: parsedAmount,
       payment_date: new Date(paymentDate).toISOString(),
+      notes: notes.trim() || null,
     });
   };
 
@@ -42,8 +42,8 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 mb-6 marvel-animate-in" style={{ borderLeft: "4px solid #1565c0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", borderLeftWidth: "4px", borderLeftColor: "#1565c0" }}>
-      <h3 className="marvel-title text-lg mb-4">Add Subscription & Payment</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <h3 className="marvel-title text-lg mb-4">Add Payment</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Plan</label>
           <select
@@ -55,16 +55,6 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
               <option key={p.value} value={p.value}>{p.label}</option>
             ))}
           </select>
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Start Date</label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="marvel-input w-full rounded-lg px-3 py-2"
-            required
-          />
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Amount (Rs.)</label>
@@ -89,13 +79,23 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
           />
         </div>
       </div>
+      <div className="mt-4">
+        <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Notes (Optional)</label>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Add any notes about this payment..."
+          className="marvel-input w-full rounded-lg px-3 py-2"
+          rows="2"
+        />
+      </div>
       <div className="flex gap-3 mt-4">
         <button
           type="submit"
           disabled={isSubmitting}
           className="marvel-btn-gold px-6 py-2 rounded-lg font-semibold uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Processing..." : "Add Subscription & Payment"}
+          {isSubmitting ? "Processing..." : "Add Payment"}
         </button>
         {onCancel && (
           <button

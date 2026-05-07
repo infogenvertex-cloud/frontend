@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 import MemberForm from "../components/MemberForm";
+import Pagination from "../components/Pagination";
 
 export default function Members() {
   const queryClient = useQueryClient();
@@ -10,38 +11,94 @@ export default function Members() {
   const [editing, setEditing] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
   // Debounce search input to reduce API calls
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
+      setCurrentPage(1); // Reset to first page on search
     }, 500); // Wait 500ms after user stops typing
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const { data: members = [], isLoading } = useQuery({
-    queryKey: ["members", debouncedSearch],
+  const { data, isLoading } = useQuery({
+    queryKey: ["members", debouncedSearch, currentPage, pageSize],
     queryFn: () => {
-      const params = debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : "";
-      return api.get(`/members/${params}`).then((r) => r.data);
+      const params = new URLSearchParams({
+        page: currentPage,
+        page_size: pageSize,
+      });
+      if (debouncedSearch) {
+        params.append('search', debouncedSearch);
+      }
+      return api.get(`/members/?${params.toString()}`).then((r) => r.data);
     },
   });
 
+  const members = data?.items || [];
+  const totalPages = data?.total_pages || 1;
+  const total = data?.total || 0;
+
   const createMutation = useMutation({
-    mutationFn: (data) => api.post("/members/", data),
-    onSuccess: () => {
+    mutationFn: (data) => {
+      console.log("🚀 Creating new member - API call starting");
+      console.log("📤 Data being sent to API:", data);
+      console.log("🔍 Join date details:", {
+        join_date: data.join_date,
+        type: typeof data.join_date,
+        isValidDate: data.join_date ? !isNaN(new Date(data.join_date).getTime()) : false
+      });
+      return api.post("/members/", data);
+    },
+    onSuccess: (response, variables) => {
+      console.log("✅ Member creation successful!");
+      console.log("📥 API Response:", response.data);
+      console.log("📋 Original variables sent:", variables);
       queryClient.invalidateQueries({ queryKey: ["members"] });
       setShowForm(false);
     },
+    onError: (error, variables) => {
+      console.error("❌ Member creation failed!");
+      console.error("🚨 Error details:", error);
+      console.error("📋 Variables that failed:", variables);
+      if (error.response) {
+        console.error("📥 Server response:", error.response.data);
+        console.error("🔢 Status code:", error.response.status);
+      }
+    }
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => api.put(`/members/${id}`, data),
-    onSuccess: () => {
+    mutationFn: ({ id, data }) => {
+      console.log("🔄 Updating member - API call starting");
+      console.log("🆔 Member ID:", id);
+      console.log("📤 Update data being sent:", data);
+      console.log("🔍 Join date details:", {
+        join_date: data.join_date,
+        type: typeof data.join_date,
+        isValidDate: data.join_date ? !isNaN(new Date(data.join_date).getTime()) : false
+      });
+      return api.put(`/members/${id}`, data);
+    },
+    onSuccess: (response, variables) => {
+      console.log("✅ Member update successful!");
+      console.log("📥 API Response:", response.data);
+      console.log("📋 Original variables sent:", variables);
       queryClient.invalidateQueries({ queryKey: ["members"] });
       setEditing(null);
     },
+    onError: (error, variables) => {
+      console.error("❌ Member update failed!");
+      console.error("🚨 Error details:", error);
+      console.error("📋 Variables that failed:", variables);
+      if (error.response) {
+        console.error("📥 Server response:", error.response.data);
+        console.error("🔢 Status code:", error.response.status);
+      }
+    }
   });
 
   const deleteMutation = useMutation({
@@ -111,7 +168,12 @@ export default function Members() {
         </div>
         {debouncedSearch && (
           <p className="text-sm text-gray-500 mt-2">
-            {members.length} result{members.length !== 1 ? 's' : ''} found for "{debouncedSearch}"
+            {total} result{total !== 1 ? 's' : ''} found for "{debouncedSearch}"
+          </p>
+        )}
+        {!debouncedSearch && total > 0 && (
+          <p className="text-sm text-gray-500 mt-2">
+            Showing {members.length} of {total} members
           </p>
         )}
       </div>
@@ -200,6 +262,13 @@ export default function Members() {
           </table>
         </div>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

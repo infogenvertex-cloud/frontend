@@ -1,22 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { MarvelMLogo } from "./MarvelIcons";
 import marvelBg from "../assets/marvel theme2.jpg";
 import ironmanBg from "../assets/Iron Man.jpg";
 import thorBg from "../assets/thor.jpg";
-import drstrange from "../assets/dr.strang.jpg";
+import drstrange from "../assets/spyderman.jpg";
 
 const pageBgs = {
   "/": { img: marvelBg, rotate: "0deg" },
   "/members": { img: ironmanBg, rotate: "0deg" },
-  "/subscriptions": { img: thorBg, rotate: "0deg" },
   "/visitors": { img: drstrange, rotate: "0deg" },
 };
 
 const navItems = [
   { path: "/", label: "Dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1", color: "#1565c0" },
   { path: "/members", label: "Members", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z", color: "#c62828" },
-  { path: "/subscriptions", label: "Subscriptions", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", color: "#2e7d32" },
+  { path: "/expiring", label: "Expiring Soon", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", color: "#f57c00" },
   { path: "/visitors", label: "Visitors", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", color: "#7b1fa2" },
 ];
 
@@ -24,6 +23,16 @@ export default function Layout({ children, onLogout }) {
   const location = useLocation();
   const admin = JSON.parse(localStorage.getItem("admin") || "{}");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("🏗️ Layout Component Mounted");
+    console.log("  Admin data:", admin);
+    console.log("  Current path:", location.pathname);
+  }, []);
+
+  useEffect(() => {
+    console.log("🧭 Navigation:", location.pathname);
+  }, [location.pathname]);
 
   return (
     <div className="flex h-screen" style={{ background: "#f0f4f8" }}>

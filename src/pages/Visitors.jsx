@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/axios";
+import Pagination from "../components/Pagination";
 
 export default function Visitors() {
-  const [visitors, setVisitors] = useState([]);
+  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({
@@ -11,22 +13,23 @@ export default function Visitors() {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
-  async function fetchVisitors() {
-    try {
-      const response = await api.get("/visitors");
-      setVisitors(response.data);
-    } catch (error) {
-      console.error("Error fetching visitors:", error);
-    }
-  }
+  const { data, isLoading: visitorsLoading, refetch } = useQuery({
+    queryKey: ["visitors", currentPage, pageSize],
+    queryFn: () => {
+      const params = new URLSearchParams({
+        page: currentPage,
+        page_size: pageSize,
+      });
+      return api.get(`/visitors/?${params.toString()}`).then((r) => r.data);
+    },
+  });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchVisitors();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
+  const visitors = data?.items || [];
+  const totalPages = data?.total_pages || 1;
+  const total = data?.total || 0;
 
   const validateMobile = (mobile) => {
     // Remove spaces, dashes, and parentheses
@@ -89,7 +92,7 @@ export default function Visitors() {
       setFormData({ name: "", mobile: "" });
       setShowForm(false);
       setEditing(null);
-      fetchVisitors();
+      refetch();
     } catch (error) {
       console.error("Error saving visitor:", error);
       if (error.response?.data?.detail) {
@@ -135,7 +138,7 @@ export default function Visitors() {
     
     try {
       await api.delete(`/visitors/${id}`);
-      fetchVisitors();
+      refetch();
     } catch (error) {
       console.error("Error deleting visitor:", error);
       alert("Failed to delete visitor");
@@ -151,6 +154,17 @@ export default function Visitors() {
       minute: "2-digit",
     });
   };
+
+  if (visitorsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading visitors...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -297,8 +311,15 @@ export default function Visitors() {
       </div>
 
       <div className="mt-4 text-sm" style={{ color: "#64748b" }}>
-        Total Visitors: {visitors.length}
+        Total Visitors: {total}
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }
