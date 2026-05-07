@@ -213,7 +213,13 @@ export default function Members() {
                   <td className="px-4 sm:px-6 py-4 font-mono font-semibold text-sm" style={{ color: "#1565c0" }}>{m.member_id}</td>
                   <td className="px-4 sm:px-6 py-4 text-gray-700 font-medium text-sm">{m.name}</td>
                   <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{m.phone}</td>
-                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{m.join_date}</td>
+                  <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">
+                    {m.join_date ? new Date(m.join_date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    }) : 'N/A'}
+                  </td>
                   <td className="px-4 sm:px-6 py-4">
                     <div className="flex flex-wrap gap-2">
                       <Link

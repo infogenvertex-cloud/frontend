@@ -67,7 +67,11 @@ export default function MemberDetail() {
           </span>
         </div>
         <p className="text-gray-500 mt-1 text-sm">Phone: {member.phone}</p>
-        <p className="text-gray-500 text-sm">Joined: {member.join_date}</p>
+        <p className="text-gray-500 text-sm">Joined: {member.join_date ? new Date(member.join_date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }) : 'N/A'}</p>
       </div>
 
       {/* Payments */}
