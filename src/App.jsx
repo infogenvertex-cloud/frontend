@@ -6,6 +6,7 @@ import Members from "./pages/Members";
 import MemberDetail from "./pages/MemberDetail";
 import Visitors from "./pages/Visitors";
 import ExpiringSoon from "./pages/ExpiringSoon";
+import RevenueHistory from "./pages/RevenueHistory";
 import Login from "./pages/Login";
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
         <Route path="/members/:id" element={<MemberDetail />} />
         <Route path="/visitors" element={<Visitors />} />
         <Route path="/expiring" element={<ExpiringSoon />} />
+        <Route path="/revenue" element={<RevenueHistory />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Layout>

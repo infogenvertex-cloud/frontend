@@ -1,57 +1,19 @@
 import { useState, useEffect } from "react";
 
 export default function MemberForm({ member, onSubmit, onCancel }) {
-  const [name, setName] = useState(member?.name ?? "");
-  const [phone, setPhone] = useState(member?.phone ?? "");
-  const [joinDate, setJoinDate] = useState(
-    member?.join_date 
-      ? new Date(member.join_date).toISOString().split('T')[0] 
-      : new Date().toISOString().split('T')[0]
-  );
-
-  // Debug logging for component initialization
-  useEffect(() => {
-    console.log("🔧 MemberForm Component Initialized");
-    console.log("📝 Initial State:", {
-      member: member,
-      name: name,
-      phone: phone,
-      joinDate: joinDate,
-      isEditing: !!member
-    });
-    
-    // Log the member object structure
-    if (member) {
-      console.log("👤 Member object received:", member);
-      console.log("📋 Member properties:", Object.keys(member));
-      console.log("🔍 Member values:", {
-        id: member.id,
-        member_id: member.member_id,
-        name: member.name,
-        phone: member.phone,
-        join_date: member.join_date
-      });
-    }
-    
-    if (member?.join_date) {
-      console.log("📅 Processing existing join_date:", {
-        original: member.join_date,
-        converted: new Date(member.join_date).toISOString().split('T')[0],
-        dateObject: new Date(member.join_date)
-      });
-    } else {
-      console.log("📅 Using default join_date (today):", {
-        today: new Date().toISOString().split('T')[0],
-        dateObject: new Date()
-      });
-    }
-  }, [member]);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [joinDate, setJoinDate] = useState(new Date().toISOString().split('T')[0]);
 
   // Update form fields when member prop changes (for editing)
   useEffect(() => {
+    console.log("🔧 MemberForm useEffect triggered");
+    console.log("👤 Member prop:", member);
+    
     if (member) {
       console.log("🔄 Updating form fields for editing");
       console.log("📝 Setting form values from member:", {
+        id: member.id,
         name: member.name,
         phone: member.phone,
         join_date: member.join_date
@@ -67,12 +29,18 @@ export default function MemberForm({ member, onSubmit, onCancel }) {
           formatted: formattedDate
         });
         setJoinDate(formattedDate);
+      } else {
+        const todayDate = new Date().toISOString().split('T')[0];
+        console.log("📅 No join_date in member, using today:", todayDate);
+        setJoinDate(todayDate);
       }
     } else {
       console.log("🆕 Resetting form for new member");
       setName("");
       setPhone("");
-      setJoinDate(new Date().toISOString().split('T')[0]);
+      const todayDate = new Date().toISOString().split('T')[0];
+      setJoinDate(todayDate);
+      console.log("📅 Set join_date to today:", todayDate);
     }
   }, [member]);
 
