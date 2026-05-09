@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function SubscriptionForm({ memberId, payment, onSubmit, onCancel, isSubmitting = false }) {
-  const [months, setMonths] = useState("1");
+  const [days, setDays] = useState("30");
   const [amount, setAmount] = useState("");
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
@@ -9,15 +9,15 @@ export default function SubscriptionForm({ memberId, payment, onSubmit, onCancel
   // Populate form when editing
   useEffect(() => {
     if (payment) {
-      // Extract months from plan (e.g., "3_month" -> "3")
-      const monthsFromPlan = payment.plan.split("_")[0];
-      setMonths(monthsFromPlan);
+      // Extract days from plan (e.g., "30_day" -> "30")
+      const daysFromPlan = payment.plan.split("_")[0];
+      setDays(daysFromPlan);
       setAmount(payment.amount.toString());
       setPaymentDate(new Date(payment.payment_date).toISOString().split("T")[0]);
       setNotes(payment.notes || "");
     } else {
       // Reset for new payment
-      setMonths("1");
+      setDays("30");
       setAmount("");
       setPaymentDate(new Date().toISOString().split("T")[0]);
       setNotes("");
@@ -27,7 +27,7 @@ export default function SubscriptionForm({ memberId, payment, onSubmit, onCancel
   const handleSubmit = (e) => {
     e.preventDefault();
     const parsedAmount = parseFloat(amount);
-    const parsedMonths = parseInt(months);
+    const parsedDays = parseInt(days);
     
     // Validate amount
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
@@ -35,14 +35,14 @@ export default function SubscriptionForm({ memberId, payment, onSubmit, onCancel
       return;
     }
     
-    // Validate months
-    if (isNaN(parsedMonths) || parsedMonths <= 0 || parsedMonths > 120) {
-      alert("Please enter a valid number of months (1-120)");
+    // Validate days
+    if (isNaN(parsedDays) || parsedDays <= 0 || parsedDays > 3650) {
+      alert("Please enter a valid number of days (1-3650)");
       return;
     }
     
-    // Convert months to plan format (e.g., "3" becomes "3_month")
-    const plan = `${parsedMonths}_month`;
+    // Convert days to plan format (e.g., "30" becomes "30_day")
+    const plan = `${parsedDays}_day`;
     
     onSubmit({ 
       member_id: memberId, 
@@ -61,11 +61,11 @@ export default function SubscriptionForm({ memberId, payment, onSubmit, onCancel
     }
   };
 
-  const handleMonthsChange = (e) => {
+  const handleDaysChange = (e) => {
     // Only allow positive integers
     const value = e.target.value;
     if (value === '' || /^\d+$/.test(value)) {
-      setMonths(value);
+      setDays(value);
     }
   };
 
@@ -75,21 +75,21 @@ export default function SubscriptionForm({ memberId, payment, onSubmit, onCancel
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">
-            Months
+            Days
           </label>
           <input
             type="text"
             inputMode="numeric"
-            value={months}
-            onChange={handleMonthsChange}
-            placeholder="1"
+            value={days}
+            onChange={handleDaysChange}
+            placeholder="30"
             className="marvel-input w-full rounded-lg px-3 py-2"
             required
             min="1"
-            max="120"
+            max="3650"
           />
           <div className="text-xs text-gray-400 mt-1">
-            Enter number of months (1-120)
+            Enter number of days (1-3650)
           </div>
         </div>
         <div>
