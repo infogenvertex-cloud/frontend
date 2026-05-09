@@ -1,10 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmitting = false }) {
+export default function SubscriptionForm({ memberId, payment, onSubmit, onCancel, isSubmitting = false }) {
   const [months, setMonths] = useState("1");
   const [amount, setAmount] = useState("");
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
+
+  // Populate form when editing
+  useEffect(() => {
+    if (payment) {
+      // Extract months from plan (e.g., "3_month" -> "3")
+      const monthsFromPlan = payment.plan.split("_")[0];
+      setMonths(monthsFromPlan);
+      setAmount(payment.amount.toString());
+      setPaymentDate(new Date(payment.payment_date).toISOString().split("T")[0]);
+      setNotes(payment.notes || "");
+    } else {
+      // Reset for new payment
+      setMonths("1");
+      setAmount("");
+      setPaymentDate(new Date().toISOString().split("T")[0]);
+      setNotes("");
+    }
+  }, [payment]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,7 +71,7 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 mb-6 marvel-animate-in" style={{ borderLeft: "4px solid #1565c0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", borderLeftWidth: "4px", borderLeftColor: "#1565c0" }}>
-      <h3 className="marvel-title text-lg mb-4">Add Payment</h3>
+      <h3 className="marvel-title text-lg mb-4">{payment ? "Edit Payment" : "Add Payment"}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">
@@ -113,7 +131,7 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
           disabled={isSubmitting}
           className="marvel-btn-gold px-6 py-2 rounded-lg font-semibold uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Processing..." : "Add Payment"}
+          {isSubmitting ? "Processing..." : (payment ? "Update Payment" : "Add Payment")}
         </button>
         {onCancel && (
           <button

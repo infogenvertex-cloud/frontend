@@ -9,6 +9,7 @@ export default function MemberDetail() {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [showSubForm, setShowSubForm] = useState(false);
+  const [editingPayment, setEditingPayment] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -48,6 +49,46 @@ export default function MemberDetail() {
     },
   });
 
+  const updatePaymentMutation = useMutation({
+    mutationFn: ({ paymentId, data }) => api.put(`/payments/${paymentId}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["payments", id] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      
+      setEditingPayment(null);
+      alert("✅ Payment updated successfully!");
+    },
+    onError: (error) => {
+      console.error("❌ Error updating payment:", error);
+      alert(`Error: ${error.response?.data?.detail || error.message}`);
+    },
+  });
+
+  const deletePaymentMutation = useMutation({
+    mutationFn: (paymentId) => api.delete(`/payments/${paymentId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["payments", id] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      
+      alert("✅ Payment deleted successfully!");
+    },
+    onError: (error) => {
+      console.error("❌ Error deleting payment:", error);
+      alert(`Error: ${error.response?.data?.detail || error.message}`);
+    },
+  });
+
+  const handleDeletePayment = (payment) => {
+    if (window.confirm(`Delete payment of Rs. ${payment.amount.toFixed(2)} from ${new Date(payment.payment_date).toLocaleDateString()}?`)) {
+      deletePaymentMutation.mutate(payment.id);
+    }
+  };
+
+  const handleEditPayment = (payment) => {
+    setEditingPayment(payment);
+    setShowSubForm(false);
+  };
+
   if (memberLoading) return <p className="text-gray-400">Loading...</p>;
 
   return (
@@ -78,7 +119,7 @@ export default function MemberDetail() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
         <h3 className="marvel-title text-lg sm:text-xl">Payments</h3>
         <button
-          onClick={() => setShowSubForm(!showSubForm)}
+          onClick={() => { setShowSubForm(!showSubForm); setEditingPayment(null); }}
           className="marvel-btn-gold px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide w-full sm:w-auto"
         >
           + Add Payment
@@ -94,8 +135,18 @@ export default function MemberDetail() {
         />
       )}
 
+      {editingPayment && (
+        <SubscriptionForm
+          memberId={parseInt(id)}
+          payment={editingPayment}
+          onSubmit={(data) => updatePaymentMutation.mutate({ paymentId: editingPayment.id, data })}
+          onCancel={() => setEditingPayment(null)}
+          isSubmitting={updatePaymentMutation.isPending}
+        />
+      )}
+
       <div className="bg-white rounded-xl overflow-hidden mb-8 marvel-animate-in overflow-x-auto" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
-        <div className="min-w-[700px]">
+        <div className="min-w-[800px]">
           <table className="w-full text-left">
             <thead style={{ background: "#f5f7fa" }}>
               <tr>
@@ -103,6 +154,7 @@ export default function MemberDetail() {
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Date</th>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Notes</th>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -122,11 +174,33 @@ export default function MemberDetail() {
                   <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">
                     {p.notes || "--"}
                   </td>
+                  <td className="px-4 sm:px-6 py-4">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleEditPayment(p)}
+                        className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 rounded font-medium transition-all duration-200"
+                        style={{ background: "rgba(21, 101, 192, 0.08)", color: "#1565c0", border: "1px solid rgba(21, 101, 192, 0.2)" }}
+                        onMouseEnter={(e) => e.target.style.background = "rgba(21, 101, 192, 0.15)"}
+                        onMouseLeave={(e) => e.target.style.background = "rgba(21, 101, 192, 0.08)"}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeletePayment(p)}
+                        className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 rounded font-medium transition-all duration-200"
+                        style={{ background: "rgba(198, 40, 40, 0.06)", color: "#c62828", border: "1px solid rgba(198, 40, 40, 0.15)" }}
+                        onMouseEnter={(e) => e.target.style.background = "rgba(198, 40, 40, 0.12)"}
+                        onMouseLeave={(e) => e.target.style.background = "rgba(198, 40, 40, 0.06)"}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
               {payments.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
+                  <td colSpan={5} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
                     No payments yet.
                   </td>
                 </tr>
