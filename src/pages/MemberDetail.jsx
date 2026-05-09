@@ -162,7 +162,20 @@ export default function MemberDetail() {
                 <tr key={p.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
                   <td className="px-4 sm:px-6 py-4 text-gray-700 text-sm">
                     <span className="px-2 py-1 rounded text-xs font-semibold" style={{ background: "#e3f2fd", color: "#1565c0" }}>
-                      {p.plan.replace("_", " ").toUpperCase()}
+                      {(() => {
+                        // Extract number and unit from plan (e.g., "45_month" or "30_day")
+                        const parts = p.plan.split("_");
+                        const number = parts[0];
+                        const unit = parts[1];
+                        
+                        // Convert to days if it's in month format
+                        if (unit === "month") {
+                          const days = parseInt(number) * 30;
+                          return `${days} DAYS`;
+                        } else {
+                          return `${number} ${unit.toUpperCase()}${parseInt(number) !== 1 ? 'S' : ''}`;
+                        }
+                      })()}
                     </span>
                   </td>
                   <td className="px-4 sm:px-6 py-4 font-semibold text-sm" style={{ color: "#0d2137" }}>

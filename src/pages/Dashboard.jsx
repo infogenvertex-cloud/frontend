@@ -129,7 +129,20 @@ export default function Dashboard() {
                       <td className="py-3 px-4 text-gray-600">{p.member_phone || "--"}</td>
                       <td className="py-3 px-4">
                         <span className="px-2 py-1 rounded text-xs font-semibold" style={{ background: "#e3f2fd", color: "#1565c0" }}>
-                          {p.plan.replace("_", " ").toUpperCase()}
+                          {(() => {
+                            // Extract number and unit from plan (e.g., "45_month" or "30_day")
+                            const parts = p.plan.split("_");
+                            const number = parts[0];
+                            const unit = parts[1];
+                            
+                            // Convert to days if it's in month format
+                            if (unit === "month") {
+                              const days = parseInt(number) * 30;
+                              return `${days} DAYS`;
+                            } else {
+                              return `${number} ${unit.toUpperCase()}${parseInt(number) !== 1 ? 'S' : ''}`;
+                            }
+                          })()}
                         </span>
                       </td>
                       <td className="py-3 px-4 font-semibold" style={{ color: "#0d2137" }}>Rs. {p.amount.toFixed(2)}</td>
