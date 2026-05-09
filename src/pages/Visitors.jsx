@@ -15,7 +15,6 @@ export default function Visitors() {
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState("");
   const pageSize = 20;
 
   const { data, isLoading: visitorsLoading, refetch } = useQuery({
@@ -70,14 +69,12 @@ export default function Visitors() {
     }
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setSearchQuery(searchInput);
+  const handleSearchChange = (value) => {
+    setSearchQuery(value);
     setCurrentPage(1); // Reset to first page when searching
   };
 
   const handleClearSearch = () => {
-    setSearchInput("");
     setSearchQuery("");
     setCurrentPage(1);
   };
@@ -206,36 +203,28 @@ export default function Visitors() {
 
       {/* Search Bar - Moved to Top */}
       <div className="bg-white rounded-xl p-4 mb-6" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
-        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <input
               type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search by name or mobile number..."
               className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-purple-500 focus:outline-none focus:ring-2 focus:border-transparent transition text-sm sm:text-base"
               style={{ background: "#f9fafb" }}
             />
           </div>
-          <div className="flex gap-2">
+          {searchQuery && (
             <button
-              type="submit"
-              className="marvel-btn-primary text-white px-6 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
+              type="button"
+              onClick={handleClearSearch}
+              className="text-sm px-4 py-2 rounded-lg font-medium transition-all duration-200"
+              style={{ background: "rgba(100, 116, 139, 0.08)", color: "#64748b", border: "1px solid rgba(100, 116, 139, 0.2)" }}
             >
-              Search
+              Clear
             </button>
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="text-sm px-4 py-2 rounded-lg font-medium transition-all duration-200"
-                style={{ background: "rgba(100, 116, 139, 0.08)", color: "#64748b", border: "1px solid rgba(100, 116, 139, 0.2)" }}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-        </form>
+          )}
+        </div>
         {searchQuery && (
           <p className="text-sm mt-3" style={{ color: "#64748b" }}>
             Searching for: <span className="font-semibold" style={{ color: "#7b1fa2" }}>"{searchQuery}"</span>
