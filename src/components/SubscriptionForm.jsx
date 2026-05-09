@@ -1,14 +1,7 @@
 import { useState } from "react";
 
-const PLANS = [
-  { value: "1_month", label: "1 Month" },
-  { value: "3_month", label: "3 Months" },
-  { value: "6_month", label: "6 Months" },
-  { value: "12_month", label: "12 Months" },
-];
-
 export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmitting = false }) {
-  const [plan, setPlan] = useState("1_month");
+  const [months, setMonths] = useState("1");
   const [amount, setAmount] = useState("");
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
@@ -16,12 +9,22 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
   const handleSubmit = (e) => {
     e.preventDefault();
     const parsedAmount = parseFloat(amount);
+    const parsedMonths = parseInt(months);
     
     // Validate amount
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       alert("Please enter a valid amount greater than 0");
       return;
     }
+    
+    // Validate months
+    if (isNaN(parsedMonths) || parsedMonths <= 0 || parsedMonths > 120) {
+      alert("Please enter a valid number of months (1-120)");
+      return;
+    }
+    
+    // Convert months to plan format (e.g., "3" becomes "3_month")
+    const plan = `${parsedMonths}_month`;
     
     onSubmit({ 
       member_id: memberId, 
@@ -40,21 +43,36 @@ export default function SubscriptionForm({ memberId, onSubmit, onCancel, isSubmi
     }
   };
 
+  const handleMonthsChange = (e) => {
+    // Only allow positive integers
+    const value = e.target.value;
+    if (value === '' || /^\d+$/.test(value)) {
+      setMonths(value);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 mb-6 marvel-animate-in" style={{ borderLeft: "4px solid #1565c0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8", borderLeftWidth: "4px", borderLeftColor: "#1565c0" }}>
       <h3 className="marvel-title text-lg mb-4">Add Payment</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Plan</label>
-          <select
-            value={plan}
-            onChange={(e) => setPlan(e.target.value)}
+          <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">
+            Months
+          </label>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={months}
+            onChange={handleMonthsChange}
+            placeholder="1"
             className="marvel-input w-full rounded-lg px-3 py-2"
-          >
-            {PLANS.map((p) => (
-              <option key={p.value} value={p.value}>{p.label}</option>
-            ))}
-          </select>
+            required
+            min="1"
+            max="120"
+          />
+          <div className="text-xs text-gray-400 mt-1">
+            Enter number of months (1-120)
+          </div>
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Amount (Rs.)</label>
