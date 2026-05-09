@@ -14,15 +14,20 @@ export default function Visitors() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const pageSize = 20;
 
   const { data, isLoading: visitorsLoading, refetch } = useQuery({
-    queryKey: ["visitors", currentPage, pageSize],
+    queryKey: ["visitors", currentPage, pageSize, searchQuery],
     queryFn: () => {
       const params = new URLSearchParams({
         page: currentPage,
         page_size: pageSize,
       });
+      if (searchQuery) {
+        params.append("search", searchQuery);
+      }
       return api.get(`/visitors/?${params.toString()}`).then((r) => r.data);
     },
   });
@@ -63,6 +68,18 @@ export default function Visitors() {
     if (errors[field]) {
       setErrors({ ...errors, [field]: null });
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchQuery(searchInput);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const handleSubmit = async (e) => {
@@ -187,6 +204,45 @@ export default function Visitors() {
         </button>
       </div>
 
+      {/* Search Bar - Moved to Top */}
+      <div className="bg-white rounded-xl p-4 mb-6" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search by name or mobile number..."
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-purple-500 focus:outline-none focus:ring-2 focus:border-transparent transition text-sm sm:text-base"
+              style={{ background: "#f9fafb" }}
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="marvel-btn-primary text-white px-6 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide"
+            >
+              Search
+            </button>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="text-sm px-4 py-2 rounded-lg font-medium transition-all duration-200"
+                style={{ background: "rgba(100, 116, 139, 0.08)", color: "#64748b", border: "1px solid rgba(100, 116, 139, 0.2)" }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </form>
+        {searchQuery && (
+          <p className="text-sm mt-3" style={{ color: "#64748b" }}>
+            Searching for: <span className="font-semibold" style={{ color: "#7b1fa2" }}>"{searchQuery}"</span>
+          </p>
+        )}
+      </div>
+
       {showForm && (
         <div className="bg-white rounded-xl p-4 sm:p-6 mb-6 marvel-animate-in" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #e0e4e8" }}>
           <h3 className="text-base sm:text-lg font-semibold mb-4" style={{ color: "#0d2137" }}>
@@ -270,13 +326,15 @@ export default function Visitors() {
               {visitors.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
-                    No visitors recorded yet. Add your first visitor above.
+                    {searchQuery ? `No visitors found matching "${searchQuery}"` : "No visitors recorded yet. Add your first visitor above."}
                   </td>
                 </tr>
               ) : (
                 visitors.map((visitor, index) => (
                   <tr key={visitor.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
-                    <td className="px-4 sm:px-6 py-4 font-mono font-semibold text-sm" style={{ color: "#7b1fa2" }}>{index + 1}</td>
+                    <td className="px-4 sm:px-6 py-4 font-mono font-semibold text-sm" style={{ color: "#7b1fa2" }}>
+                      {(currentPage - 1) * pageSize + index + 1}
+                    </td>
                     <td className="px-4 sm:px-6 py-4 font-medium text-sm" style={{ color: "#0d2137" }}>{visitor.name}</td>
                     <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{visitor.mobile}</td>
                     <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{formatDate(visitor.visited_at)}</td>
@@ -310,8 +368,23 @@ export default function Visitors() {
         </div>
       </div>
 
-      <div className="mt-4 text-sm" style={{ color: "#64748b" }}>
-        Total Visitors: {total}
+      <div className="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div className="text-sm" style={{ color: "#64748b" }}>
+          {searchQuery ? (
+            <>
+              Found {total} visitor{total !== 1 ? 's' : ''} matching "{searchQuery}"
+            </>
+          ) : (
+            <>
+              Total Visitors: {total}
+            </>
+          )}
+          {total > 0 && (
+            <span className="ml-2">
+              (Showing {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, total)})
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Pagination */}
