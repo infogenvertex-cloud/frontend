@@ -177,9 +177,9 @@ export default function Layout({ children, onLogout }) {
                 </svg>
               </a>
 
-              {/* Google Maps */}
+              {/* Google Maps - Using correct link */}
               <a
-                href="https://maps.app.goo.gl/e6n5nvVlFOeTrQCJ"
+                href="https://maps.app.goo.gl/GiowmM1adxDW3umr6"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
@@ -187,7 +187,7 @@ export default function Layout({ children, onLogout }) {
                 title="Find us on Google Maps"
               >
                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  <path d="M12 2C8.13 2 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                 </svg>
               </a>
             </div>
