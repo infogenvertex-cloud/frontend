@@ -15,7 +15,18 @@ export default function Visitors() {
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const pageSize = 20;
+
+  // Debounce search - only trigger after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(searchInput);
+      setCurrentPage(1); // Reset to first page when search changes
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const { data, isLoading: visitorsLoading, refetch } = useQuery({
     queryKey: ["visitors", currentPage, pageSize, searchQuery],
@@ -69,12 +80,8 @@ export default function Visitors() {
     }
   };
 
-  const handleSearchChange = (value) => {
-    setSearchQuery(value);
-    setCurrentPage(1); // Reset to first page when searching
-  };
-
   const handleClearSearch = () => {
+    setSearchInput("");
     setSearchQuery("");
     setCurrentPage(1);
   };
@@ -207,8 +214,8 @@ export default function Visitors() {
           <div className="flex-1">
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search by name or mobile number..."
               className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-purple-500 focus:outline-none focus:ring-2 focus:border-transparent transition text-sm sm:text-base"
               style={{ background: "#f9fafb" }}
