@@ -200,6 +200,7 @@ export default function Members() {
           <table className="w-full text-left">
             <thead style={{ background: "#f5f7fa" }}>
               <tr>
+                <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">S.NO</th>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Member ID</th>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-4 sm:px-6 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Phone</th>
@@ -208,8 +209,11 @@ export default function Members() {
               </tr>
             </thead>
             <tbody>
-              {members.map((m) => (
+              {members.map((m, index) => (
                 <tr key={m.id} className="border-t border-gray-100 marvel-row-hover transition-colors">
+                  <td className="px-4 sm:px-6 py-4 font-mono font-semibold text-sm" style={{ color: "#7b1fa2" }}>
+                    {(currentPage - 1) * pageSize + index + 1}
+                  </td>
                   <td className="px-4 sm:px-6 py-4 font-mono font-semibold text-sm" style={{ color: "#1565c0" }}>{m.member_id}</td>
                   <td className="px-4 sm:px-6 py-4 text-gray-700 font-medium text-sm">{m.name}</td>
                   <td className="px-4 sm:px-6 py-4 text-gray-600 text-sm">{m.phone}</td>
@@ -259,7 +263,7 @@ export default function Members() {
               ))}
               {members.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
+                  <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
                     {debouncedSearch ? `No members found matching "${debouncedSearch}"` : "No members yet. Add your first member above."}
                   </td>
                 </tr>
