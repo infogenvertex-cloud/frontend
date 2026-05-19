@@ -11,6 +11,7 @@ export default function Members() {
   const [editing, setEditing] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
 
@@ -24,8 +25,13 @@ export default function Members() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  // Reset to first page when month filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedMonth]);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["members", debouncedSearch, currentPage, pageSize],
+    queryKey: ["members", debouncedSearch, selectedMonth, currentPage, pageSize],
     queryFn: () => {
       const params = new URLSearchParams({
         page: currentPage,
@@ -33,6 +39,9 @@ export default function Members() {
       });
       if (debouncedSearch) {
         params.append('search', debouncedSearch);
+      }
+      if (selectedMonth) {
+        params.append('month', selectedMonth);
       }
       return api.get(`/members/?${params.toString()}`).then((r) => r.data);
     },
@@ -121,6 +130,29 @@ export default function Members() {
     setDebouncedSearch("");
   };
 
+  const clearFilters = () => {
+    setSearchQuery("");
+    setDebouncedSearch("");
+    setSelectedMonth("");
+  };
+
+  // Generate month options for the last 24 months
+  const generateMonthOptions = () => {
+    const options = [];
+    const currentDate = new Date();
+    
+    for (let i = 0; i < 24; i++) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const monthValue = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const monthLabel = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+      options.push({ value: monthValue, label: monthLabel });
+    }
+    
+    return options;
+  };
+
+  const monthOptions = generateMonthOptions();
+
   if (isLoading) return <p className="text-gray-400">Loading...</p>;
 
   return (
@@ -135,8 +167,9 @@ export default function Members() {
         </button>
       </div>
 
-      {/* Search Bar */}
-      <div className="mb-6">
+      {/* Search Bar and Filters */}
+      <div className="mb-6 space-y-4">
+        {/* Search Input */}
         <div className="relative">
           <input
             type="text"
@@ -166,13 +199,49 @@ export default function Members() {
             </button>
           )}
         </div>
+
+        {/* Month Filter and Clear Filters */}
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+          <div className="flex-1 sm:flex-none">
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="w-full sm:w-64 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm sm:text-base"
+              style={{ background: "#ffffff" }}
+            >
+              <option value="">All Months</option>
+              {monthOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {(debouncedSearch || selectedMonth) && (
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
+
+        {/* Results Info */}
         {debouncedSearch && (
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-gray-500">
             {total} result{total !== 1 ? 's' : ''} found for "{debouncedSearch}"
+            {selectedMonth && ` in ${monthOptions.find(m => m.value === selectedMonth)?.label}`}
           </p>
         )}
-        {!debouncedSearch && total > 0 && (
-          <p className="text-sm text-gray-500 mt-2">
+        {!debouncedSearch && selectedMonth && (
+          <p className="text-sm text-gray-500">
+            Showing {members.length} of {total} members joined in {monthOptions.find(m => m.value === selectedMonth)?.label}
+          </p>
+        )}
+        {!debouncedSearch && !selectedMonth && total > 0 && (
+          <p className="text-sm text-gray-500">
             Showing {members.length} of {total} members
           </p>
         )}
@@ -264,7 +333,10 @@ export default function Members() {
               {members.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-gray-400 text-sm">
-                    {debouncedSearch ? `No members found matching "${debouncedSearch}"` : "No members yet. Add your first member above."}
+                    {debouncedSearch || selectedMonth ? 
+                      `No members found${debouncedSearch ? ` matching "${debouncedSearch}"` : ''}${selectedMonth ? ` for ${monthOptions.find(m => m.value === selectedMonth)?.label}` : ''}` : 
+                      "No members yet. Add your first member above."
+                    }
                   </td>
                 </tr>
               )}
